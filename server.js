@@ -1070,6 +1070,71 @@ app.get("/api/assistant", function (req, res) {
   });
 });
 
+/** 前端公开配置(无需登录):腾讯地图 GL key 等,密钥只在服务端 .env 中配置 */
+app.get("/api/public-config", function (req, res) {
+  return res.json({
+    tencentMapKey: process.env.TENCENT_MAP_KEY || "",
+  });
+});
+
+/** 腾讯地点搜索服务端代理 + 持久缓存:避免浏览器 JSONP 重复消耗 WebService 每日配额 */
+var GEO_CACHE_FILE = path.join(__dirname, "data", "geo-cache.json");
+var geoCache = null;
+function loadGeoCache() {
+  if (geoCache) return geoCache;
+  try {
+    geoCache = JSON.parse(fs.readFileSync(GEO_CACHE_FILE, "utf8"));
+  } catch (e) {
+    geoCache = {};
+  }
+  return geoCache;
+}
+var geoCacheSaveTimer = null;
+function saveGeoCacheDebounced() {
+  if (geoCacheSaveTimer) return;
+  geoCacheSaveTimer = setTimeout(function () {
+    geoCacheSaveTimer = null;
+    try {
+      fs.writeFileSync(GEO_CACHE_FILE, JSON.stringify(geoCache || {}), "utf8");
+    } catch (e) {}
+  }, 500);
+}
+app.get("/api/geo-search", async function (req, res) {
+  var keyword = String((req.query && req.query.keyword) || "").trim().slice(0, 60);
+  if (!keyword) return res.status(400).json({ error: "缺少 keyword" });
+  var cacheKey = "重庆 " + keyword;
+  var cache = loadGeoCache();
+  if (Object.prototype.hasOwnProperty.call(cache, cacheKey)) {
+    return res.json({ coord: cache[cacheKey], cached: true });
+  }
+  var key = process.env.TENCENT_MAP_KEY || "";
+  if (!key) return res.status(503).json({ error: "未配置 TENCENT_MAP_KEY" });
+  try {
+    var url =
+      "https://apis.map.qq.com/ws/place/v1/search?keyword=" + encodeURIComponent(keyword) +
+      "&boundary=" + encodeURIComponent("region(重庆,0)") +
+      "&page_size=1&key=" + encodeURIComponent(key);
+    var r = await fetch(url);
+    var data = await r.json();
+    var coord = null;
+    if (data && data.status === 0 && data.data && data.data.length) {
+      var loc = data.data[0].location;
+      if (loc && isFinite(loc.lat) && isFinite(loc.lng)) {
+        coord = { lat: Number(loc.lat), lng: Number(loc.lng) };
+      }
+    }
+    // null 也缓存(查不到的不再重复请求);配额类错误不缓存
+    if (data && (data.status === 0 || data.status === 310 || data.status === 311)) {
+      cache[cacheKey] = coord;
+      saveGeoCacheDebounced();
+      return res.json({ coord: coord });
+    }
+    return res.status(502).json({ error: (data && data.message) || "腾讯地点搜索失败", status: data && data.status });
+  } catch (e) {
+    return res.status(502).json({ error: "腾讯地点搜索请求异常" });
+  }
+});
+
 app.post("/api/weather-assistant", function (req, res) {
   if (!DOUBAO_UPSTREAM_URL) {
     return res.status(503).json({ error: "未配置 DOUBAO_UPSTREAM_URL" });

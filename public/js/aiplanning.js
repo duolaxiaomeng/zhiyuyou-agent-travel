@@ -55,6 +55,11 @@
             .replace(/'/g, "&#39;");
     }
 
+    function setEmptyHint(id, show) {
+        var el = $(id);
+        if (el) el.hidden = !show;
+    }
+
     function loadCartProductIds() {
         var ids = new Set();
         if (!window.ZYYAuth || !window.ZYYAuth.getToken()) return ids;
@@ -75,18 +80,28 @@
         grid.innerHTML = "";
 
         var destId = $("filterDestination") ? $("filterDestination").value : "all";
-        if (!destId || destId === "all") return;
-        if (!window.ZYYShop || typeof window.ZYYShop.getProductsByDistrict !== "function") return;
+        if (!destId || destId === "all") {
+            setEmptyHint("localFarmEmpty", true);
+            return;
+        }
+        if (!window.ZYYShop || typeof window.ZYYShop.getProductsByDistrict !== "function") {
+            setEmptyHint("localFarmEmpty", true);
+            return;
+        }
 
         var label = getDestinationLabel(destId);
         var list = window.ZYYShop.getProductsByDistrict(label) || [];
-        if (!list.length) return;
+        if (!list.length) {
+            setEmptyHint("localFarmEmpty", true);
+            return;
+        }
 
         var inCartIds = loadCartProductIds();
         var max = 6;
         var slice = list.slice(0, max);
 
         panel.hidden = false;
+        setEmptyHint("localFarmEmpty", false);
 
         grid.innerHTML = slice
             .map(function (p) {
@@ -153,6 +168,7 @@
         var list = $("scenicBookingList");
         if (panel) panel.hidden = true;
         if (list) list.innerHTML = "";
+        setEmptyHint("scenicBookingEmpty", true);
     }
 
     function renderScenicBookingLinks(links) {
@@ -162,6 +178,7 @@
         if (!Array.isArray(links) || !links.length) {
             panel.hidden = true;
             list.innerHTML = "";
+            setEmptyHint("scenicBookingEmpty", true);
             return;
         }
         list.innerHTML = links
@@ -195,6 +212,7 @@
             })
             .join("");
         panel.hidden = false;
+        setEmptyHint("scenicBookingEmpty", false);
     }
 
     function fetchScenicBookingLinks(routeText, destination, destinationId) {
@@ -202,6 +220,7 @@
         var list = $("scenicBookingList");
         if (!panel || !list || !routeText) return Promise.resolve();
         panel.hidden = false;
+        setEmptyHint("scenicBookingEmpty", false);
         list.innerHTML = '<p class="route-plan-placeholder">正在匹配景区预约入口...</p>';
         return fetch("/api/scenic-booking-links", {
             method: "POST",
@@ -225,6 +244,7 @@
                 console.error("景区预约入口查询失败", e);
                 panel.hidden = true;
                 list.innerHTML = "";
+                setEmptyHint("scenicBookingEmpty", true);
             });
     }
 
@@ -443,6 +463,584 @@
         });
     }
 
+    /* ================= 腾讯地图 GL(全屏沉浸式底图) ================= */
+
+    var tmap = {
+        map: null,
+        ready: false,
+        key: "",
+        infoWindow: null,
+        multiMarker: null,
+        polylines: [],
+        stops: [] // 最近一次生成的节点(含坐标)
+    };
+
+    var DAY_COLORS = ["#2f7d5c", "#35709e", "#c07a1e", "#5b54b8", "#b83a5e", "#0e8a8a", "#7a5cc0"];
+
+    function dayColor(dayIdx) {
+        return DAY_COLORS[dayIdx % DAY_COLORS.length];
+    }
+
+    function showMapFallback() {
+        var fb = $("plannerMapFallback");
+        if (fb) fb.hidden = false;
+        tmap.ready = false;
+        tmap.map = null;
+    }
+
+    function loadScriptOnce(src) {
+        return new Promise(function (resolve, reject) {
+            var s = document.createElement("script");
+            s.src = src;
+            s.onload = function () { resolve(); };
+            s.onerror = function () { reject(new Error("script load failed: " + src)); };
+            document.head.appendChild(s);
+        });
+    }
+
+    function initTMap() {
+        var mapEl = $("plannerMap");
+        if (!mapEl) return;
+        fetch("/api/public-config")
+            .then(function (r) { return r.json(); })
+            .then(function (cfg) {
+                var key = cfg && cfg.tencentMapKey ? String(cfg.tencentMapKey).trim() : "";
+                if (!key) {
+                    showMapFallback();
+                    return null;
+                }
+                tmap.key = key;
+                // 腾讯 GL 不需要安全密钥,直接带 key 加载即可
+                return loadScriptOnce(
+                    "https://map.qq.com/api/gljs?v=1.exp&key=" + encodeURIComponent(key)
+                ).then(function () {
+                    // gljs 只是个加载器,真正的 TMap.Map 异步注入,需要轮询等待
+                    return new Promise(function (resolve, reject) {
+                        var waited = 0;
+                        var timer = setInterval(function () {
+                            if (window.TMap && window.TMap.Map) {
+                                clearInterval(timer);
+                                resolve();
+                            } else if ((waited += 200) >= 8000) {
+                                clearInterval(timer);
+                                reject(new Error("TMap 库加载超时"));
+                            }
+                        }, 200);
+                    });
+                }).then(function () {
+                    try {
+                        tmap.map = new TMap.Map(mapEl, {
+                            // 注意:腾讯 LatLng 参数顺序是 (lat, lng),与高德相反
+                            center: new TMap.LatLng(29.563, 106.5516),
+                            zoom: 10,
+                            viewMode: "2D"
+                        });
+                        tmap.ready = true;
+                    } catch (e) {
+                        console.error("腾讯地图初始化失败", e);
+                        showMapFallback();
+                    }
+                });
+            })
+            .catch(function (e) {
+                console.error("地图配置加载失败", e);
+                showMapFallback();
+            });
+    }
+
+    function clearMapOverlays() {
+        if (tmap.multiMarker) {
+            try { tmap.multiMarker.setMap(null); } catch (e) {}
+            tmap.multiMarker = null;
+        }
+        tmap.polylines.forEach(function (pl) {
+            try { pl.setMap(null); } catch (e) {}
+        });
+        tmap.polylines = [];
+        tmap.stops = [];
+        if (tmap.infoWindow) {
+            try { tmap.infoWindow.close(); } catch (e) {}
+        }
+    }
+
+    function focusStopOnMap(stop) {
+        if (!tmap.ready || !stop) return;
+        if (!stop.coord) {
+            // 没解析到坐标:给出可见反馈而不是静默无反应
+            var sheet = $("pv2Sheet");
+            var el = sheet && sheet.querySelector('.pv2-stop[data-gidx="' + (tmap.stops || []).indexOf(stop) + '"]');
+            if (el) {
+                el.classList.add("pv2-stop-miss");
+                setTimeout(function () { el.classList.remove("pv2-stop-miss"); }, 1800);
+            }
+            return;
+        }
+        try {
+            var center = new TMap.LatLng(stop.coord.lat, stop.coord.lng);
+            tmap.map.easeTo({ center: center, zoom: 15 }, { duration: 800 });
+            var html =
+                '<div class="pv2-iw"><b>' + escapeHtml(stop.name) + "</b>" +
+                '<p class="sub">' +
+                escapeHtml([stop.time, stop.tag, stop.dur ? "停留 " + stop.dur : ""].filter(Boolean).join(" · ")) +
+                (stop.desc ? "<br>" + escapeHtml(stop.desc) : "") +
+                "</p></div>";
+            if (!tmap.infoWindow) {
+                // 腾讯 InfoWindow 构造时就必须有合法 position,所以懒创建
+                tmap.infoWindow = new TMap.InfoWindow({
+                    map: tmap.map,
+                    position: center,
+                    offset: { x: 0, y: -18 }
+                });
+            }
+            tmap.infoWindow.setPosition(center);
+            tmap.infoWindow.setContent(html);
+            tmap.infoWindow.open();
+        } catch (e) {
+            console.warn("地图定位失败", e);
+        }
+    }
+
+    /* ---- 地理编码:内置常见景点坐标字典优先,查不到再走 WebService JSONP ---- */
+
+    // 常见景点坐标(腾讯/国测局 GCJ-02 系下的近似值;键为名称关键字,坐标为 lat, lng)
+    var SPOT_DICT = [
+        { keys: ["解放碑"], lat: 29.5570, lng: 106.5769 },
+        { keys: ["洪崖洞"], lat: 29.5634, lng: 106.5785 },
+        { keys: ["磁器口"], lat: 29.5800, lng: 106.4490 },
+        { keys: ["长江索道"], lat: 29.5565, lng: 106.5880 },
+        { keys: ["南山一棵树", "一棵树"], lat: 29.5210, lng: 106.5830 },
+        { keys: ["天生三桥"], lat: 29.3160, lng: 107.7880 },
+        { keys: ["仙女山"], lat: 29.4480, lng: 107.6590 },
+        { keys: ["李子坝"], lat: 29.5520, lng: 106.5350 },
+        { keys: ["朝天门"], lat: 29.5667, lng: 106.5833 },
+        { keys: ["大足石刻"], lat: 29.7010, lng: 105.7190 },
+        { keys: ["十八梯"], lat: 29.5531, lng: 106.5694 },
+        { keys: ["山城步道", "第三步道"], lat: 29.5550, lng: 106.5630 },
+        { keys: ["湖广会馆"], lat: 29.5683, lng: 106.5831 },
+        { keys: ["三峡博物馆", "中国三峡博物馆"], lat: 29.5626, lng: 106.5512 },
+        { keys: ["八一路", "八一好吃街"], lat: 29.5565, lng: 106.5750 },
+        { keys: ["观音桥"], lat: 29.5750, lng: 106.5330 },
+        { keys: ["千厮门大桥"], lat: 29.5660, lng: 106.5810 },
+        { keys: ["鹅岭"], lat: 29.5530, lng: 106.5290 },
+        { keys: ["白公馆"], lat: 29.5880, lng: 106.4250 },
+        { keys: ["渣滓洞"], lat: 29.5900, lng: 106.4280 },
+        { keys: ["缙云山"], lat: 29.8350, lng: 106.3950 },
+        { keys: ["金佛山"], lat: 29.0500, lng: 107.1000 },
+        { keys: ["龚滩古镇"], lat: 28.9530, lng: 108.3950 },
+        { keys: ["酉阳桃花源", "桃花源"], lat: 28.8450, lng: 108.7680 }
+    ];
+
+    function lookupSpotDict(name) {
+        if (!name) return null;
+        for (var i = 0; i < SPOT_DICT.length; i++) {
+            var ks = SPOT_DICT[i].keys;
+            for (var j = 0; j < ks.length; j++) {
+                if (name.indexOf(ks[j]) >= 0) {
+                    return { lat: SPOT_DICT[i].lat, lng: SPOT_DICT[i].lng };
+                }
+            }
+        }
+        return null;
+    }
+
+    // 走服务端代理(带持久缓存),不再浏览器直连 WebService,避免重复消耗每日配额
+    function serverPlaceSearch(keyword) {
+        return fetch("/api/geo-search?keyword=" + encodeURIComponent(keyword))
+            .then(function (r) { return r.ok ? r.json() : null; })
+            .then(function (data) {
+                if (data && data.coord && isFinite(data.coord.lat) && isFinite(data.coord.lng)) {
+                    return { lat: Number(data.coord.lat), lng: Number(data.coord.lng) };
+                }
+                return null;
+            })
+            .catch(function () { return null; });
+    }
+
+    function geocodeStop(stop) {
+        var hit = lookupSpotDict(stop.name);
+        if (hit) return Promise.resolve(hit);
+        return serverPlaceSearch(stop.name);
+    }
+
+    // 逐个解析节点坐标(JSONP 请求 200ms 间隔防限流,失败的跳过),再画 marker 与虚线
+    function plotDaysOnMap(days) {
+        if (!tmap.ready || !window.TMap) return;
+        clearMapOverlays();
+        var stops = [];
+        days.forEach(function (day, di) {
+            day.stops.forEach(function (stop) {
+                stops.push(stop);
+                stop._dayIdx = di;
+            });
+        });
+        tmap.stops = stops;
+
+        var queue = stops.slice();
+        function step() {
+            if (!queue.length) {
+                finishPlot(days);
+                return;
+            }
+            var stop = queue.shift();
+            var dictHit = lookupSpotDict(stop.name);
+            geocodeStop(stop).then(function (coord) {
+                if (coord) stop.coord = coord;
+                // 字典命中的不占用接口配额,立即处理下一个
+                setTimeout(step, dictHit ? 0 : 200);
+            });
+        }
+        step();
+    }
+
+    /* ---- 编号圆点 marker:canvas 生成按天配色的圆形数字图标 ---- */
+
+    var markerStyleCache = {};
+
+    function getMarkerStyle(dayIdx, num) {
+        var id = "pv2d" + dayIdx + "n" + num;
+        if (markerStyleCache[id]) return { id: id, style: markerStyleCache[id] };
+        var size = 56; // 2 倍尺寸保证清晰
+        var cv = document.createElement("canvas");
+        cv.width = size;
+        cv.height = size;
+        var ctx = cv.getContext("2d");
+        ctx.beginPath();
+        ctx.arc(size / 2, size / 2, size / 2 - 4, 0, Math.PI * 2);
+        ctx.fillStyle = dayColor(dayIdx);
+        ctx.fill();
+        ctx.lineWidth = 5;
+        ctx.strokeStyle = "#ffffff";
+        ctx.stroke();
+        ctx.fillStyle = "#ffffff";
+        ctx.font = "bold 26px -apple-system, sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText(String(num), size / 2, size / 2 + 1);
+        var style = new TMap.MarkerStyle({
+            width: 28,
+            height: 28,
+            src: cv.toDataURL("image/png"),
+            anchor: { x: 14, y: 14 }
+        });
+        markerStyleCache[id] = style;
+        return { id: id, style: style };
+    }
+
+    function finishPlot(days) {
+        if (!tmap.ready) return;
+        var styles = {};
+        var geometries = [];
+        var bounds = new TMap.LatLngBounds();
+        var hasPt = false;
+        var gidx = 0;
+        days.forEach(function (day, di) {
+            var color = dayColor(di);
+            var paths = [];
+            day.stops.forEach(function (stop) {
+                gidx++;
+                if (!stop.coord) return;
+                var pos = new TMap.LatLng(stop.coord.lat, stop.coord.lng);
+                paths.push(pos);
+                bounds.extend(pos);
+                hasPt = true;
+                var ms = getMarkerStyle(di, gidx);
+                styles[ms.id] = ms.style;
+                geometries.push({
+                    id: ms.id + "_" + gidx,
+                    styleId: ms.id,
+                    position: pos,
+                    properties: { gidx: gidx - 1 }
+                });
+            });
+            if (paths.length >= 2) {
+                var pl = new TMap.MultiPolyline({
+                    map: tmap.map,
+                    styles: {
+                        day: new TMap.PolylineStyle({
+                            color: color,
+                            width: 4,
+                            borderWidth: 0,
+                            lineCap: "round",
+                            dashArray: [6, 8]
+                        })
+                    },
+                    geometries: [{ id: "pv2day_" + di, styleId: "day", paths: paths }]
+                });
+                tmap.polylines.push(pl);
+            }
+        });
+        if (geometries.length) {
+            tmap.multiMarker = new TMap.MultiMarker({
+                map: tmap.map,
+                styles: styles,
+                geometries: geometries
+            });
+            tmap.multiMarker.on("click", function (evt) {
+                var g = evt && evt.geometry;
+                if (g && g.properties && typeof g.properties.gidx === "number") {
+                    var stop = tmap.stops[g.properties.gidx];
+                    if (stop) {
+                        focusStopOnMap(stop);
+                        revealStopInSheet(g.properties.gidx);
+                    }
+                }
+            });
+        }
+        if (hasPt) {
+            try {
+                tmap.map.fitBounds(bounds, { padding: { top: 90, bottom: 300, left: 300, right: 60 } });
+            } catch (e) {
+                try { tmap.map.fitBounds(bounds); } catch (e2) {}
+            }
+        }
+    }
+
+    /* ================= 路线 Markdown → 按天卡片解析 ================= */
+
+    var CN_NUM = { 一: 1, 二: 2, 三: 3, 四: 4, 五: 5, 六: 6, 七: 7, 八: 8, 九: 9, 十: 10 };
+
+    var DAY_HEAD_RE = /^\s*(?:#{1,6}\s*)?(?:\*\*)?\s*(?:第\s*([0-9一二三四五六七八九十]{1,3})\s*天|Day\s*([0-9]{1,2}))/i;
+
+    function parseDayHead(line) {
+        var m = line.match(DAY_HEAD_RE);
+        if (!m) return null;
+        // 排除「## 逐日安排」之类不含数字的标题:正则本身已要求数字/中文数字
+        var num = m[1] ? (CN_NUM[m[1]] || parseInt(m[1], 10)) : parseInt(m[2], 10);
+        if (!num || isNaN(num)) return null;
+        var rest = line.slice(m[0].length)
+            .replace(/\*\*/g, "")
+            .replace(/^[\s:：\-—·、.]+/, "")
+            .replace(/[\s\-—*.]+$/, "")
+            .trim();
+        return { num: num, title: rest };
+    }
+
+    function guessTag(line) {
+        if (/夜景|夜色|夜游/.test(line)) return "夜景";
+        if (/火锅|小吃|美食|餐|吃|烧烤|夜市|茶(馆|楼)/.test(line)) return "美食";
+        if (/徒步|登山|步道|爬山/.test(line)) return "徒步";
+        if (/亲子|乐园|儿童|小朋友/.test(line)) return "亲子";
+        if (/摄影|拍照|打卡|机位|观景台/.test(line)) return "摄影";
+        if (/古镇|博物|人文|历史|寺庙|文化|旧址|老街|非遗/.test(line)) return "人文";
+        if (/山|湖|公园|森林|草原|瀑布|峡谷|江|河|自然|湿地|花海/.test(line)) return "自然";
+        return "";
+    }
+
+    function parseStopLine(line) {
+        var raw = line.trim();
+        if (!raw) return null;
+        var isListItem = /^([-*•+]|\d{1,2}[.、)）])\s+/.test(raw);
+        var timeM = raw.match(/([01]?\d|2[0-3])[:：][0-5]\d/);
+        if (!isListItem && !timeM) return null;
+
+        var name = null;
+        var boldM = raw.match(/\*\*([^*<>]{1,30})\*\*/);
+        if (boldM && !/^(第.{1,4}天|Day\s*\d|行程|攻略|提示|注意|交通|住宿|预算|费用|来源|参考|资料)/i.test(boldM[1].trim())) {
+            name = boldM[1].trim();
+        } else if (timeM) {
+            var rest = raw.slice(raw.indexOf(timeM[0]) + timeM[0].length)
+                .replace(/^[\s:：\-—、.~～]+/, "");
+            var nm = rest.match(/^[^，,。.:：;；\s(（【\[][^，,。:：;；(（【\[]*/);
+            if (nm) name = nm[0].trim();
+        }
+        // 加粗词里混了时间(如「**09:00 解放碑**」)时把时间剥掉
+        if (name) {
+            var nameTimeM = name.match(/([01]?\d|2[0-3])[:：][0-5]\d/);
+            if (nameTimeM) {
+                name = name.replace(nameTimeM[0], "").replace(/^[\s:：\-—、.~～]+|[\s:：\-—、.~～]+$/g, "").trim();
+            }
+        }
+        if (!name || name.length < 2 || name.length > 30) return null;
+        if (/^(第.{1,4}天|Day\s*\d)/i.test(name)) return null;
+
+        var desc = raw
+            .replace(/^([-*•+]|\d{1,2}[.、)）])\s+/, "")
+            .replace(/\*\*([^*]*)\*\*/g, "$1");
+        if (timeM) desc = desc.replace(timeM[0], "");
+        desc = desc.replace(name, "").replace(/^[\s:：\-—、.|·~～(（)）,，。]+/, "").trim();
+        if (desc.length > 120) desc = desc.slice(0, 120) + "…";
+
+        var durM = raw.match(/(?:停留|游览|游玩|参观|用时|约|耗时)\s*([0-9.]+\s*(?:小时|分钟|h|min))/i);
+        if (!durM) durM = raw.match(/([0-9.]+\s*(?:小时|分钟))(?![0-9])/);
+        return {
+            time: timeM ? timeM[0] : "",
+            name: name,
+            desc: desc,
+            dur: durM ? durM[1].replace(/\s+/g, "") : "",
+            tag: guessTag(raw)
+        };
+    }
+
+    // 把整段路线 markdown 切成「天」,尽力提取节点;解析不出节点的天保留原文
+    function parseRouteDays(md) {
+        var days = [];
+        var current = null;
+        var lines = String(md || "").split(/\r?\n/);
+        lines.forEach(function (line) {
+            var head = parseDayHead(line);
+            if (head) {
+                current = { num: head.num, title: head.title, stops: [], rawLines: [] };
+                days.push(current);
+                return;
+            }
+            if (!current) return;
+            // 遇到非「天」的一二级标题(如 知识来源/动态调整说明),当天段落结束,不再解析节点
+            if (/^\s*#{1,2}\s+/.test(line)) {
+                current = null;
+                return;
+            }
+            var stop = parseStopLine(line);
+            if (stop) {
+                // 同名去重(同一天内)
+                var dup = current.stops.some(function (s) { return s.name === stop.name; });
+                if (!dup) current.stops.push(stop);
+            }
+            if (line.trim()) current.rawLines.push(line);
+        });
+        days.forEach(function (d) {
+            d.raw = d.rawLines.join("\n").trim();
+        });
+        return days;
+    }
+
+    /* ================= 底部按天卡片 + 左侧总览 ================= */
+
+    function renderDayCards(days) {
+        var sheet = $("pv2Sheet");
+        if (!sheet) return;
+        var gidx = 0;
+        sheet.innerHTML = days
+            .map(function (day, di) {
+                var head =
+                    '<div class="pv2-daycard-hd"><span class="dn">DAY ' + day.num + "</span>" +
+                    '<span class="t">' + escapeHtml(day.title || ("第 " + day.num + " 天")) + "</span>" +
+                    '<button type="button" class="pv2-fold" aria-label="折叠/展开当天卡片">▾</button></div>';
+                var body;
+                if (day.stops.length) {
+                    body = '<div class="pv2-daycard-bd">' + day.stops
+                        .map(function (stop) {
+                            gidx++;
+                            var meta = "";
+                            if (stop.tag) meta += '<span class="pv2-tag ' + escapeHtml(stop.tag) + '">' + escapeHtml(stop.tag) + "</span>";
+                            if (stop.dur) meta += '<span class="pv2-dur">⏱ ' + escapeHtml(stop.dur) + "</span>";
+                            return (
+                                '<div class="pv2-stop" data-gidx="' + (gidx - 1) + '">' +
+                                '<span class="time">' + escapeHtml(stop.time || "--") + "</span>" +
+                                '<span class="idx" style="background:' + dayColor(di) + '">' + gidx + "</span>" +
+                                "<div>" +
+                                '<div class="n">' + escapeHtml(stop.name) + "</div>" +
+                                (stop.desc ? '<div class="d">' + escapeHtml(stop.desc) + "</div>" : "") +
+                                (meta ? '<div class="meta">' + meta + "</div>" : "") +
+                                "</div></div>"
+                            );
+                        })
+                        .join("") + "</div>";
+                } else {
+                    // 解析不出节点:把当天原始 markdown 渲染进卡片,不允许空白
+                    var rawHtml;
+                    var rawMd = day.raw || "（该天内容为空）";
+                    if (typeof marked !== "undefined" && typeof DOMPurify !== "undefined") {
+                        try {
+                            rawHtml = DOMPurify.sanitize(marked.parse(rawMd, { breaks: true }));
+                        } catch (e) {
+                            rawHtml = escapeHtml(rawMd);
+                        }
+                    } else {
+                        rawHtml = escapeHtml(rawMd);
+                    }
+                    body = '<div class="pv2-daycard-raw">' + rawHtml + "</div>";
+                }
+                return '<div class="pv2-daycard">' + head + body + "</div>";
+            })
+            .join("");
+        sheet.classList.add("show");
+    }
+
+    function hideDayCards() {
+        var sheet = $("pv2Sheet");
+        if (!sheet) return;
+        sheet.classList.remove("show");
+        sheet.innerHTML = "";
+    }
+
+    function updateOverview(days, destLabel) {
+        var stops = 0;
+        (days || []).forEach(function (d) { stops += d.stops.length; });
+        if ($("ovDays")) $("ovDays").textContent = days && days.length ? String(days.length) : "-";
+        if ($("ovStops")) $("ovStops").textContent = stops ? String(stops) : "-";
+        if ($("ovDest") && destLabel) $("ovDest").textContent = destLabel;
+    }
+
+    /* 点击地图标记 → 展开对应卡片、滚动到对应节点并高亮 */
+    function revealStopInSheet(gidx) {
+        var sheet = $("pv2Sheet");
+        if (!sheet || !sheet.classList.contains("show")) return;
+        var stopEl = sheet.querySelector('.pv2-stop[data-gidx="' + gidx + '"]');
+        if (!stopEl) return;
+        var card = stopEl.closest(".pv2-daycard");
+        if (card && card.classList.contains("folded")) card.classList.remove("folded");
+        if (card) card.scrollIntoView({ behavior: "smooth", inline: "center", block: "nearest" });
+        setTimeout(function () {
+            stopEl.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        }, 250);
+        stopEl.classList.add("pv2-stop-hl");
+        setTimeout(function () { stopEl.classList.remove("pv2-stop-hl"); }, 1800);
+    }
+
+    /* 点击 DAY 卡片 → 地图飞到当天所有节点的范围 */
+    function flyToDayCard(cardEl) {
+        if (!tmap.ready) return;
+        var stops = cardEl.querySelectorAll(".pv2-stop[data-gidx]");
+        var bounds = new TMap.LatLngBounds();
+        var n = 0, last = null;
+        stops.forEach(function (el) {
+            var s = tmap.stops && tmap.stops[parseInt(el.getAttribute("data-gidx"), 10)];
+            if (s && s.coord) {
+                last = new TMap.LatLng(s.coord.lat, s.coord.lng);
+                bounds.extend(last);
+                n++;
+            }
+        });
+        if (!n) return;
+        try {
+            if (n === 1) {
+                tmap.map.easeTo({ center: last, zoom: 14 }, { duration: 800 });
+            } else {
+                tmap.map.fitBounds(bounds, { padding: { top: 90, bottom: 300, left: 300, right: 60 } });
+            }
+        } catch (e) {}
+    }
+
+    function initSheetClick() {
+        var sheet = $("pv2Sheet");
+        if (!sheet) return;
+        sheet.addEventListener("click", function (e) {
+            var foldBtn = e.target && e.target.closest ? e.target.closest(".pv2-fold") : null;
+            if (foldBtn) {
+                var card = foldBtn.closest(".pv2-daycard");
+                if (card) card.classList.toggle("folded");
+                return;
+            }
+            var el = e.target && e.target.closest ? e.target.closest(".pv2-stop") : null;
+            if (el) {
+                var gidx = parseInt(el.getAttribute("data-gidx"), 10);
+                var stop = tmap.stops && tmap.stops[gidx];
+                if (stop) focusStopOnMap(stop);
+                return;
+            }
+            // 点卡片其它区域(如标题栏):地图飞到当天范围
+            var card = e.target && e.target.closest ? e.target.closest(".pv2-daycard") : null;
+            if (card) flyToDayCard(card);
+        });
+    }
+
+    function openRouteSection() {
+        var sec = $("pv2SecRoute");
+        if (sec && !sec.open) sec.open = true;
+    }
+
+    /* ================= 主流程 ================= */
+
     function initAiPlanner() {
         if (
             !$("btnGenerateRoute") ||
@@ -455,24 +1053,8 @@
         }
 
         initPrefs();
-
-        // 让“实时态势 / 路线与动态调整结果”外框上限与“偏好选择”保持一致
-        // 目的：避免三块框高度不同导致视觉错位；内容变长后在面板内部滚动。
-        function syncPlannerPanelHeights() {
-            var prefsEl = document.querySelector(".ai-panel--prefs");
-            var liveEl = document.querySelector(".ai-panel--live");
-            var outEl = document.querySelector(".ai-panel--out");
-            if (!prefsEl || !liveEl || !outEl) return;
-
-            var h = Math.round(prefsEl.getBoundingClientRect().height);
-            if (!isFinite(h) || h <= 0) return;
-
-            // 用固定 height 让“初始外框长度”保持一致；内容过长时由 overflow-y 接管滚动。
-            liveEl.style.height = h + "px";
-            outEl.style.height = h + "px";
-            liveEl.style.overflowY = "auto";
-            outEl.style.overflowY = "auto";
-        }
+        initTMap();
+        initSheetClick();
 
         $("btnGenerateRoute").addEventListener("click", function () {
             var destinationId = $("filterDestination") ? $("filterDestination").value : "all";
@@ -486,6 +1068,10 @@
             var dayCount = parseDayBudget();
             jitterLive();
             hideScenicBooking();
+            hideDayCards();
+            clearMapOverlays();
+            updateOverview(null, destLabel);
+            openRouteSection();
             $("rlMeterFill").style.width = "0%";
             $("adjustLog").hidden = true;
 
@@ -630,10 +1216,18 @@
                         throw new Error("空响应");
                     }
                     note.textContent = "流式输出完成";
+                    // 输出完成后收起进度条
+                    setTimeout(function () { meter.hidden = true; }, 600);
                     showRouteFeedbackAfterStream();
                     fetchScenicBookingLinks(reply, destLabel, destinationId);
+                    var days = parseRouteDays(reply);
+                    if (days.length) {
+                        renderDayCards(days);
+                        updateOverview(days, destLabel);
+                        plotDaysOnMap(days);
+                    }
                     btn.disabled = false;
-                    btn.textContent = "生成定制化路线";
+                    btn.textContent = "AI规划路线";
                 })
                 .catch(function (e) {
                     console.error("AI 规划请求出错：", e);
@@ -646,7 +1240,7 @@
                     }
                     setTimeout(function () {
                         btn.disabled = false;
-                        btn.textContent = "生成定制化路线";
+                        btn.textContent = "AI规划路线";
                         fill.style.background = "";
                     }, 3000);
                 });
@@ -698,27 +1292,12 @@
             state.weatherAnalysis = null;
             state.clothingAdvice = null;
             $("liveWeather").textContent = "等待选择目的地";
-            $("liveWeatherSub").textContent = "请在左侧选择目的地";
+            $("liveWeatherSub").textContent = "请在顶部条件栏选择目的地";
             $("liveTraffic").textContent = "--";
             $("liveCapacity").textContent = "--";
             $("liveUpdated").textContent = "尚未加载";
         };
         initialWeatherSetup();
-        requestAnimationFrame(syncPlannerPanelHeights);
-        // 进一步确保在字体/布局微调后仍对齐
-        window.setTimeout(function () {
-            syncPlannerPanelHeights();
-        }, 420);
-        window.setTimeout(function () {
-            syncPlannerPanelHeights();
-        }, 900);
-        window.addEventListener("resize", function () {
-            if (!syncPlannerPanelHeights) return;
-            if (syncPlannerPanelHeights._t) window.clearTimeout(syncPlannerPanelHeights._t);
-            syncPlannerPanelHeights._t = window.setTimeout(function () {
-                syncPlannerPanelHeights();
-            }, 150);
-        });
         renderLocalFarmRec();
 
         if ($("filterDestination")) {
@@ -726,10 +1305,13 @@
                 var destinationId = this.value;
                 if ($("routePlan")) {
                     $("routePlan").innerHTML =
-                        '<p class="route-plan-placeholder">目的地已切换，请重新点击“生成定制化路线”。</p>';
+                        '<p class="route-plan-placeholder">目的地已切换，请重新点击「AI规划路线」。</p>';
                 }
                 if ($("feedbackRow")) $("feedbackRow").hidden = true;
                 hideScenicBooking();
+                hideDayCards();
+                clearMapOverlays();
+                updateOverview(null, getDestinationLabel(destinationId));
                 if ($("adjustLog")) $("adjustLog").hidden = true;
                 if ($("adjustLogList")) $("adjustLogList").innerHTML = "";
                 if ($("rlMeter")) $("rlMeter").hidden = true;

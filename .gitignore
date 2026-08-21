@@ -6,3 +6,4 @@ data/users.json
 *.log
 data/agent-config.json
 data/chat-sessions/
+data/geo-cache.json
