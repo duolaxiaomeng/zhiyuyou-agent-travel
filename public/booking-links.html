@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>智渝游 · 区县预约链接配置</title>
+    <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+    <link rel="stylesheet" href="css/main.css?v=20260820" />
+  </head>
+  <body>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="logo" href="/">
+          <span class="logo-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span>
+          <span class="logo-text">智渝游</span>
+        </a>
+        <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </button>
+        <nav class="site-nav" id="siteNav">
+          <ul class="nav-list">
+            <li><a data-page="index.html" href="/">首页</a></li>
+            <li><a data-page="chat.html" href="chat">渝小智</a></li>
+            <li><a data-page="planner.html" href="planner">AI路线规划</a></li>
+            <li><a data-page="booking-links.html" href="booking-links">预约链接</a></li>
+            <li><a data-page="vr.html" href="vr">VR导览</a></li>
+            <li><a data-page="shop.html" href="shop">农产品直购</a></li>
+            <li><a data-page="guide.html" href="guide">交流中心</a></li>
+          </ul>
+          <div class="nav-user" id="navUser"></div>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="page-hero">
+        <div class="container">
+          <h1>区县预约链接配置</h1>
+          <p>这里展示 AI 路线规划使用的区县预约/购票链接。空链接可在数据文件中补充。</p>
+        </div>
+      </section>
+
+      <section class="section">
+        <div class="container">
+          <div class="booking-config-shell">
+            <div class="booking-config-head">
+              <div>
+                <h2 class="booking-config-title">目的地链接表</h2>
+                <p class="booking-config-note">数据来源：<code>data/district-booking-links.json</code></p>
+              </div>
+              <a class="btn btn-ghost" href="planner">返回路线规划</a>
+            </div>
+            <div class="booking-config-table-wrap">
+              <table class="booking-config-table">
+                <thead>
+                  <tr>
+                    <th>目的地ID</th>
+                    <th>区县</th>
+                    <th>平台</th>
+                    <th>预约/购票链接</th>
+                    <th>备注</th>
+                  </tr>
+                </thead>
+                <tbody id="bookingLinksBody">
+                  <tr>
+                    <td colspan="5">正在读取配置...</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-brand">智渝游</p>
+      </div>
+    </footer>
+
+    <script src="js/auth-client.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/booking-links.js" defer></script>
+  </body>
+</html>

@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="description" content="智渝游 - 重庆乡镇文旅智慧服务平台" />
+  <title>智渝游 · 首页</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=20260820" />
+</head>
+<body>
+  <a class="skip-link" href="#main">跳到主要内容</a>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/" aria-label="智渝游首页">
+        <span class="logo-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span>
+        <span class="logo-text">智渝游</span>
+      </a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+        <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="site-nav" id="siteNav" aria-label="主导航">
+        <ul class="nav-list">
+          <li><a data-page="index.html" href="/">首页</a></li>
+          <li><a data-page="chat.html" href="chat">渝小智</a></li>
+          <li><a data-page="planner.html" href="planner">AI路线规划</a></li>
+            <li><a data-page="vr.html" href="vr">VR导览</a></li>
+          <li><a data-page="shop.html" href="shop">农产品直购</a></li>
+          <li><a data-page="guide.html" href="guide">交流中心</a></li>
+        </ul>
+        <div class="nav-user" id="navUser"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="hero hero--carousel" aria-roledescription="焦点轮播">
+      <div class="hero-carousel" id="heroCarousel" role="region" aria-label="首页图片轮播" aria-live="polite">
+        <div class="hero-slides">
+          <article class="hero-slide is-active" data-slide="0" aria-hidden="false">
+            <div class="hero-slide-media"><img src="assets/首页轮播图/合川・古楼红枫林：秋冬季节千亩红枫如火燃烧，林间步道穿行其间，氛围感极强。.jpg" alt="合川古楼红枫林" width="1920" height="1080" loading="eager" fetchpriority="high" decoding="async" /></div>
+            <div class="hero-slide-panel"><div class="hero-slide-inner"><h1 id="hero-title" class="hero-title hero-title--sub">合川・古楼红枫林</h1><p class="hero-lead">秋冬季节千亩红枫如火燃烧，林间步道穿行其间，氛围感极强。</p><div class="hero-actions"><a class="btn btn-primary" href="planner">体验 AI 路线</a><a class="btn btn-ghost" href="register">注册账号</a></div></div></div>
+          </article>
+          <article class="hero-slide" data-slide="1" aria-hidden="true">
+            <div class="hero-slide-media"><img src="assets/首页轮播图/垫江・恺之峰牡丹园：西南大型牡丹基地，春季牡丹盛放，国色天香，配套亭台楼阁如画卷。.jpg" alt="垫江恺之峰牡丹园" width="1920" height="1080" loading="lazy" decoding="async" /></div>
+            <div class="hero-slide-panel"><div class="hero-slide-inner"><h2 class="hero-title hero-title--sub">垫江・恺之峰牡丹园</h2><p class="hero-lead">西南大型牡丹基地，春季牡丹盛放，国色天香，配套亭台楼阁如画卷。</p><div class="hero-actions"><a class="btn btn-primary" href="guide">看攻略精选</a><a class="btn btn-ghost" href="planner">生成路线</a></div></div></div>
+          </article>
+          <article class="hero-slide" data-slide="2" aria-hidden="true">
+            <div class="hero-slide-media"><img src="assets/首页轮播图/巫溪兰英大峡谷：大巴山深处的壮美峡谷，深秋红叶漫山，峡谷江面如碧带蜿蜒。.jpg" alt="巫溪兰英大峡谷" width="1920" height="1080" loading="lazy" decoding="async" /></div>
+            <div class="hero-slide-panel"><div class="hero-slide-inner"><h2 class="hero-title hero-title--sub">巫溪兰英大峡谷</h2><p class="hero-lead">大巴山深处的壮美峡谷，深秋红叶漫山，峡谷江面如碧带蜿蜒。</p><div class="hero-actions"><a class="btn btn-primary" href="planner">去规划行程</a><a class="btn btn-ghost" href="guide">主题路线示例</a></div></div></div>
+          </article>
+          <article class="hero-slide" data-slide="3" aria-hidden="true">
+            <div class="hero-slide-media"><img src="assets/首页轮播图/彭水 蚩尤九黎城：规模宏大的苗族文化建筑群，九黎神柱、吊脚楼群、苗族祭祀广场，极具民族特色。.jpg" alt="彭水蚩尤九黎城" width="1920" height="1080" loading="lazy" decoding="async" /></div>
+            <div class="hero-slide-panel"><div class="hero-slide-inner"><h2 class="hero-title hero-title--sub">彭水・蚩尤九黎城</h2><p class="hero-lead">规模宏大的苗族文化建筑群，九黎神柱、吊脚楼群、苗族祭祀广场，极具民族特色。</p><div class="hero-actions"><a class="btn btn-primary" href="guide">看民族文化</a><a class="btn btn-ghost" href="planner">生成路线</a></div></div></div>
+          </article>
+          <article class="hero-slide" data-slide="4" aria-hidden="true">
+            <div class="hero-slide-media"><img src="assets/首页轮播图/秀山・洪安边城拉拉渡：渝湘黔三省交界，《边城》原型地，拉拉渡横跨清水江，充满边城风情。.jpg" alt="秀山洪安边城拉拉渡" width="1920" height="1080" loading="lazy" decoding="async" /></div>
+            <div class="hero-slide-panel"><div class="hero-slide-inner"><h2 class="hero-title hero-title--sub">秀山・洪安边城拉拉渡</h2><p class="hero-lead">渝湘黔三省交界，《边城》原型地，拉拉渡横跨清水江，充满边城风情。</p><div class="hero-actions"><a class="btn btn-primary" href="guide">浏览边城攻略</a><a class="btn btn-ghost" href="planner">规划线路</a></div></div></div>
+          </article>
+          <article class="hero-slide" data-slide="5" aria-hidden="true">
+            <div class="hero-slide-media"><img src="assets/首页轮播图/綦江・白云观：人称 “小梵净山”，山巅道观常年云雾缭绕，摩崖题刻与石洞遍布，视野极佳。.jpg" alt="綦江白云观" width="1920" height="1080" loading="lazy" decoding="async" /></div>
+            <div class="hero-slide-panel"><div class="hero-slide-inner"><h2 class="hero-title hero-title--sub">綦江・白云观</h2><p class="hero-lead">人称“小梵净山”，山巅道观常年云雾缭绕，摩崖题刻与石洞遍布，视野极佳。</p><div class="hero-actions"><a class="btn btn-primary" href="planner">按綦江规划</a><a class="btn btn-ghost" href="vr">查看VR导览</a></div></div></div>
+          </article>
+          <article class="hero-slide" data-slide="6" aria-hidden="true">
+            <div class="hero-slide-media"><img src="assets/首页轮播图/荣昌・万灵古镇濑溪河畔：千年水乡，吊脚楼沿河而建，古桥横跨濑溪河，非遗文化富集。.png" alt="荣昌万灵古镇濑溪河畔" width="1920" height="1080" loading="lazy" decoding="async" /></div>
+            <div class="hero-slide-panel"><div class="hero-slide-inner"><h2 class="hero-title hero-title--sub">荣昌・万灵古镇濑溪河畔</h2><p class="hero-lead">千年水乡，吊脚楼沿河而建，古桥横跨濑溪河，非遗文化富集。</p><div class="hero-actions"><a class="btn btn-primary" href="guide">看古镇玩法</a><a class="btn btn-ghost" href="planner">生成行程</a></div></div></div>
+          </article>
+        </div>
+        <div class="hero-carousel-controls" aria-hidden="false">
+          <button type="button" class="hero-carousel-btn hero-carousel-btn--prev" aria-label="上一张">‹</button>
+          <button type="button" class="hero-carousel-btn hero-carousel-btn--next" aria-label="下一张">›</button>
+          <div class="hero-dots" role="tablist" aria-label="选择轮播图片">
+            <button type="button" class="hero-dot is-active" role="tab" aria-selected="true" aria-label="第 1 张"></button>
+            <button type="button" class="hero-dot" role="tab" aria-selected="false" aria-label="第 2 张"></button>
+            <button type="button" class="hero-dot" role="tab" aria-selected="false" aria-label="第 3 张"></button>
+            <button type="button" class="hero-dot" role="tab" aria-selected="false" aria-label="第 4 张"></button>
+            <button type="button" class="hero-dot" role="tab" aria-selected="false" aria-label="第 5 张"></button>
+            <button type="button" class="hero-dot" role="tab" aria-selected="false" aria-label="第 6 张"></button>
+            <button type="button" class="hero-dot" role="tab" aria-selected="false" aria-label="第 7 张"></button>
+          </div>
+        </div>
+      </div>
+      <div class="hero-stats-wrap"><div class="hero-stats" role="list"><div class="stat" role="listitem"><span class="stat-num">120+</span><span class="stat-label">特色乡镇</span></div><div class="stat" role="listitem"><span class="stat-num">24h</span><span class="stat-label">动态态势更新</span></div><div class="stat" role="listitem"><span class="stat-num">VR</span><span class="stat-label">沉浸导览</span></div></div></div>
+    </section>
+
+    <section class="home-booking-section" aria-labelledby="homeBookingHeading">
+      <div class="container home-page-columns">
+        <aside class="home-weather-dock" aria-label="区县天气推荐">
+          <div class="home-weather-dock__inner">
+            <div class="weather-poster__shell weather--sunny" id="weatherPoster">
+              <article class="weather-poster__card" id="weatherPosterCard">
+                <div class="weather-poster__visuals">
+                  <figure class="weather-poster__scenic-wrap">
+                    <img id="weatherScenicImg" class="weather-poster__scenic" src="" alt="" loading="lazy" />
+                    <div class="weather-poster__effects" aria-hidden="true">
+                      <span class="weather-sun"></span>
+                      <span class="weather-cloud weather-cloud--1"></span>
+                      <span class="weather-cloud weather-cloud--2"></span>
+                      <span class="weather-rain"></span>
+                    </div>
+                  </figure>
+                </div>
+                <div class="weather-poster__meta">
+                  <span class="weather-poster__badge" id="weatherTypeBadge">晴天推荐</span>
+                  <span class="weather-poster__temp" id="weatherTemp">--</span>
+                </div>
+                <h3 class="weather-poster__district" id="weatherDistrict">合川区</h3>
+                <p class="weather-poster__text" id="weatherAdvice">晴天三江汇流视野通透，钓鱼城与滨江步道更适合串联游览。</p>
+                <ul class="weather-poster__spots" id="weatherSpots"></ul>
+                <p class="weather-poster__tip" id="weatherTip">出行建议：江岸与城墙区域风感明显，注意防晒与补水。</p>
+              </article>
+              <div class="weather-poster__controls">
+                <button type="button" class="weather-poster__btn" id="weatherPrev" aria-label="上一条天气画报">‹</button>
+                <div class="weather-poster__dots" id="weatherDots" role="tablist" aria-label="切换区县天气"></div>
+                <button type="button" class="weather-poster__btn" id="weatherNext" aria-label="下一条天气画报">›</button>
+              </div>
+            </div>
+            <div class="home-weather-dock__lure" id="weatherDockLure" aria-label="区县旅游推介">
+              <p class="home-weather-lure__kicker">下乡趣 · 重庆乡镇</p>
+              <p class="home-weather-lure__hook" id="weatherLureDistrictLine"></p>
+              <p class="home-weather-lure__p">高铁、自驾都能一日触达山水古镇与田园。先看天气再动身，吃住玩少踩坑。</p>
+              <p class="home-weather-lure__p home-weather-lure__p--muted">把行程交给智渝游：路况、承载与应季玩法串成一条线，多看一眼真正的巴渝乡愁。</p>
+            </div>
+          </div>
+        </aside>
+
+        <div class="home-page-columns__main">
+        <div class="home-booking-head">
+          <div class="home-booking-head-main">
+            <h2 id="homeBookingHeading" class="home-booking-h2">出行服务</h2>
+            <p class="home-booking-lead">酒店与景区门票一站式查询，结合智渝游 AI 行程与导览，规划更轻松。</p>
+          </div>
+        </div>
+
+        <div class="home-booking-types" role="tablist" aria-label="预订类型">
+          <button type="button" class="home-booking-type is-active" role="tab" aria-selected="true" data-panel="hotel">酒店预订</button>
+          <button type="button" class="home-booking-type" role="tab" aria-selected="false" data-panel="scenic">景区预订</button>
+        </div>
+
+        <div id="homePanelHotel" class="home-booking-panel" role="tabpanel">
+          <div class="home-booking-shell home-booking-shell--hotel">
+            <header class="home-booking-shell__head">
+              <h3 class="home-booking-shell__title">预订酒店</h3>
+              <span class="home-booking-badge">安心住</span>
+            </header>
+            <div class="home-booking-fields">
+              <div class="home-booking-row home-booking-row--top">
+                <label class="home-field">
+                  <span class="home-field__label">目的地</span>
+                  <input type="text" id="hotelCity" class="home-field__input" placeholder="城市 / 酒店名称" autocomplete="off" />
+                </label>
+                <label class="home-field home-field--date">
+                  <span class="home-field__label">入住</span>
+                  <input type="date" id="hotelCheckin" class="home-field__input" />
+                </label>
+                <span class="home-booking-nights" id="hotelNights">1 晚</span>
+                <label class="home-field home-field--date">
+                  <span class="home-field__label">离店</span>
+                  <input type="date" id="hotelCheckout" class="home-field__input" />
+                </label>
+              </div>
+              <div class="home-booking-row home-booking-row--bottom">
+                <label class="home-field">
+                  <span class="home-field__label">房间与人数</span>
+                  <select id="hotelRooms" class="home-field__select">
+                    <option value="1-1">1 间 · 1 人</option>
+                    <option value="1-2">1 间 · 2 人</option>
+                    <option value="2-2">2 间 · 2 人</option>
+                    <option value="2-4">2 间 · 4 人</option>
+                  </select>
+                </label>
+                <label class="home-field">
+                  <span class="home-field__label">档次</span>
+                  <select id="hotelStar" class="home-field__select">
+                    <option value="">不限</option>
+                    <option value="3">三星级/舒适</option>
+                    <option value="4">四星级/高档</option>
+                    <option value="5">五星级/豪华</option>
+                  </select>
+                </label>
+                <label class="home-field home-field--grow">
+                  <span class="home-field__label">关键词</span>
+                  <input type="text" id="hotelKeyword" class="home-field__input" placeholder="商圈、地标（选填）" />
+                </label>
+                <button type="button" class="btn home-booking-search" id="hotelSearchBtn"><span aria-hidden="true">🔍</span> 搜索</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div id="homePanelScenic" class="home-booking-panel" role="tabpanel" hidden>
+          <div class="home-booking-shell home-booking-shell--scenic">
+            <header class="home-booking-shell__head">
+              <h3 class="home-booking-shell__title">景区门票</h3>
+              <span class="home-booking-badge home-booking-badge--green">官方合作</span>
+            </header>
+            <div class="home-booking-fields">
+              <div class="home-booking-row home-booking-row--scenic">
+                <label class="home-field">
+                  <span class="home-field__label">目的地 / 景区</span>
+                  <input type="text" id="scenicDest" class="home-field__input" placeholder="如：武隆天生三桥、大足石刻" autocomplete="off" />
+                </label>
+                <label class="home-field home-field--date">
+                  <span class="home-field__label">游玩日期</span>
+                  <input type="date" id="scenicDate" class="home-field__input" />
+                </label>
+                <label class="home-field">
+                  <span class="home-field__label">票种</span>
+                  <select id="scenicTicket" class="home-field__select">
+                    <option value="adult">成人票</option>
+                    <option value="discount">优待票</option>
+                    <option value="family">亲子套票</option>
+                  </select>
+                </label>
+                <label class="home-field">
+                  <span class="home-field__label">人数</span>
+                  <select id="scenicNum" class="home-field__select">
+                    <option value="1">1 人</option>
+                    <option value="2">2 人</option>
+                    <option value="3">3 人</option>
+                    <option value="4">4 人</option>
+                    <option value="5">5 人及以上</option>
+                  </select>
+                </label>
+                <button type="button" class="btn home-booking-search" id="scenicSearchBtn"><span aria-hidden="true">🔍</span> 搜索</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="home-booking-promo">
+          <span class="home-booking-promo__text">注册智渝游账号，保存行程偏好与收藏；搭配 AI 路线规划，出游更省心。</span>
+          <a class="btn btn-sm home-booking-promo__btn" href="register">免费注册</a>
+        </div>
+
+        <div class="home-booking-quicks">
+          <a class="home-quick-card" href="planner">
+            <span class="home-quick-card__icon" aria-hidden="true">🧭</span>
+            <span class="home-quick-card__title">AI 行程助手</span>
+            <span class="home-quick-card__desc">按天数与偏好生成重庆乡镇路线</span>
+          </a>
+          <a class="home-quick-card" href="vr">
+            <span class="home-quick-card__icon" aria-hidden="true">🗺</span>
+            <span class="home-quick-card__title">VR 导览</span>
+            <span class="home-quick-card__desc">景点 3D 模型与文化讲解</span>
+          </a>
+        </div>
+
+        <div class="home-rec-block">
+          <h3 class="home-rec-block__title">酒店推荐</h3>
+          <div class="home-rec-tabs" role="tablist" aria-label="按区域筛选">
+            <button type="button" class="home-rec-tab is-active" data-region="cq" role="tab">重庆主城</button>
+            <button type="button" class="home-rec-tab" data-region="wl" role="tab">武隆</button>
+            <button type="button" class="home-rec-tab" data-region="se" role="tab">渝东南</button>
+            <button type="button" class="home-rec-tab" data-region="sx" role="tab">三峡线</button>
+          </div>
+          <div class="home-rec-carousel">
+            <button type="button" class="home-rec-arrow home-rec-arrow--prev" id="hotelRecPrev" aria-label="上一组">‹</button>
+            <div class="home-rec-viewport" id="hotelRecViewport">
+              <div class="home-rec-track" id="hotelRecTrack"></div>
+            </div>
+            <button type="button" class="home-rec-arrow home-rec-arrow--next" id="hotelRecNext" aria-label="下一组">›</button>
+          </div>
+        </div>
+
+        <div class="home-rec-block">
+          <h3 class="home-rec-block__title">精选景区</h3>
+          <div class="home-rec-carousel">
+            <button type="button" class="home-rec-arrow home-rec-arrow--prev" id="scenicRecPrev" aria-label="上一组">‹</button>
+            <div class="home-rec-viewport" id="scenicRecViewport">
+              <div class="home-rec-track" id="scenicRecTrack"></div>
+            </div>
+            <button type="button" class="home-rec-arrow home-rec-arrow--next" id="scenicRecNext" aria-label="下一组">›</button>
+          </div>
+        </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer"><div class="container footer-inner"><p class="footer-brand">智渝游</p><p class="footer-note">请使用 Node 服务访问本站；站内 AI 助手“小智”可提供问答帮助。</p><p class="footer-copy">© 2026</p></div></footer>
+  <script src="js/auth-client.js"></script>
+  <script src="js/user-data-api.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/weather-poster.js" defer></script>
+  <script src="js/hero-carousel.js" defer></script>
+  <script src="js/home-booking.js" defer></script>
+  <script src="js/float-ai.js?v=20260820" defer></script>
+</body>
+</html>

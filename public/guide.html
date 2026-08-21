@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>智渝游 · 交流中心</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=20260820" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/">
+        <span class="logo-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span>
+        <span class="logo-text">智渝游</span>
+      </a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+        <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="site-nav" id="siteNav">
+        <ul class="nav-list">
+          <li><a data-page="index.html" href="/">首页</a></li>
+          <li><a data-page="chat.html" href="chat">渝小智</a></li>
+          <li><a data-page="planner.html" href="planner">AI路线规划</a></li>
+          <li><a data-page="vr.html" href="vr">VR导览</a></li>
+          <li><a data-page="shop.html" href="shop">农产品直购</a></li>
+          <li><a data-page="guide.html" href="guide">交流中心</a></li>
+        </ul>
+        <div class="nav-user" id="navUser"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section community-page section-community">
+      <div class="container community-page-inner community-page-inner--wide">
+        <header class="community-header">
+          <div>
+            <h1 class="community-page-title">交流中心</h1>
+            <p class="community-page-lead">发现目的地 · 看攻略不如看真实分享</p>
+          </div>
+          <div class="community-header-actions">
+            <a class="btn btn-ghost btn-sm" href="community-publish#my-posts">我的发布</a>
+            <a class="btn btn-primary btn-sm" href="community-publish">发布</a>
+          </div>
+        </header>
+
+        <div class="community-search-row">
+          <div class="community-search-wrap">
+            <span class="community-search-icon" aria-hidden="true">🔍</span>
+            <input type="search" id="communitySearch" class="community-search-input" placeholder="搜索关键词；支持「万州区」等全称，也可只写「万州」" autocomplete="off" />
+          </div>
+        </div>
+
+        <p class="community-hint" id="communityLoginHint"></p>
+
+        <nav class="community-cat-grid" id="communityCatGrid" aria-label="内容分类"></nav>
+
+        <div class="community-dest-wrap">
+          <span class="community-dest-label">目的地</span>
+          <div class="community-filters community-filters--scroll" id="communityDestFilters"></div>
+        </div>
+
+        <div class="community-toolbar-row">
+          <div class="community-sort">
+            <label class="community-sort-label" for="communitySort">排序</label>
+            <select id="communitySort" class="field-select community-sort-select" aria-label="排序方式">
+              <option value="time-desc" selected>最新发布</option>
+              <option value="likes-desc">热度优先</option>
+              <option value="score-desc">评分从高到低</option>
+              <option value="score-asc">评分从低到高</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="community-feed community-feed--masonry" id="communityFeed"></div>
+        <nav class="community-pagination" id="communityPagination" aria-label="帖子分页" hidden></nav>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner"><p class="footer-brand">智渝游</p></div>
+  </footer>
+  <script src="js/auth-client.js"></script>
+  <script src="js/community-data.js"></script>
+  <script src="js/user-data-api.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/community.js" defer></script>
+  <script src="js/float-ai.js?v=20260820" defer></script>
+</body>
+</html>

@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>智渝游 · 后台订单管理</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=20260820" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/" aria-label="智渝游首页">
+        <span class="logo-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span>
+        <span class="logo-text">智渝游</span>
+      </a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+        <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="site-nav" id="siteNav" aria-label="主导航">
+        <ul class="nav-list">
+          <li><a data-page="index.html" href="/">首页</a></li>
+          <li><a data-page="chat.html" href="chat">渝小智</a></li>
+          <li><a data-page="planner.html" href="planner">AI路线规划</a></li>
+          <li><a data-page="vr.html" href="vr">VR导览</a></li>
+          <li><a data-page="shop.html" href="shop">农产品直购</a></li>
+          <li><a data-page="guide.html" href="guide">交流中心</a></li>
+        </ul>
+        <div class="nav-user" id="navUser"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <h1>后台订单管理</h1>
+      </div>
+    </section>
+    <section class="section">
+      <div class="container">
+        <div class="orders-list" id="adminOrdersList"></div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-brand">智渝游</p>
+      <p class="footer-copy">© 2026</p>
+    </div>
+  </footer>
+  <script src="js/auth-client.js"></script>
+  <script src="js/user-data-api.js"></script>
+  <script src="js/order-items-format.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/admin-orders.js" defer></script>
+  <script src="js/float-ai.js?v=20260820" defer></script>
+</body>
+</html>

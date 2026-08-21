@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <!-- 圆形裁剪：避免直接使用方形 logo 造成四角外观 -->
+    <clipPath id="circleClip">
+      <circle cx="32" cy="32" r="34" />
+    </clipPath>
+  </defs>
+
+  <g clip-path="url(#circleClip)">
+    <!-- preserveAspectRatio="meet"：尽量不裁切 logo 内部纹路 -->
+    <image href="assets/logo.jpg" x="0" y="0" width="64" height="64" preserveAspectRatio="xMidYMid meet" />
+  </g>
+</svg>

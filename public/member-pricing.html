@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>智渝游 · 会员充值</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=20260820" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/">
+        <span class="logo-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span>
+        <span class="logo-text">智渝游</span>
+      </a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+        <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="site-nav" id="siteNav">
+        <ul class="nav-list">
+          <li><a data-page="index.html" href="/">首页</a></li>
+          <li><a data-page="chat.html" href="chat">渝小智</a></li>
+          <li><a data-page="planner.html" href="planner">AI路线规划</a></li>
+          <li><a data-page="vr.html" href="vr">VR导览</a></li>
+          <li><a data-page="shop.html" href="shop">农产品直购</a></li>
+          <li><a data-page="guide.html" href="guide">交流中心</a></li>
+        </ul>
+        <div class="nav-user" id="navUser"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero page-hero--compact">
+      <div class="container">
+        <h1>会员充值</h1>
+        <p>开通会员后，在有效期内可无限次使用 VR 3D 导览。</p>
+      </div>
+    </section>
+
+    <section class="section member-pricing-section">
+      <div class="container">
+        <p class="member-pricing-login-hint" id="memberPricingLoginHint"></p>
+        <div class="member-pricing-grid" id="memberPricingGrid">
+          <article class="member-plan">
+            <h2 class="member-plan__title">连续包月</h2>
+            <p class="member-plan__price"><span class="member-plan__currency">¥</span>9.9</p>
+            <p class="member-plan__unit">约 30 天 · 连续包月</p>
+            <ul class="member-plan__list">
+              <li>VR 导览不限次数</li>
+              <li>有效期内优先体验新景点模型</li>
+            </ul>
+            <button type="button" class="btn btn-primary btn-block member-plan__btn" data-plan="month">立即开通</button>
+          </article>
+          <article class="member-plan member-plan--featured">
+            <span class="member-plan__ribbon">省更多</span>
+            <h2 class="member-plan__title">连续包季</h2>
+            <p class="member-plan__price"><span class="member-plan__currency">¥</span>28</p>
+            <p class="member-plan__unit">约 90 天</p>
+            <ul class="member-plan__list">
+              <li>VR 导览不限次数</li>
+              <li>适合季度出游规划</li>
+            </ul>
+            <button type="button" class="btn btn-primary btn-block member-plan__btn" data-plan="quarter">立即开通</button>
+          </article>
+          <article class="member-plan">
+            <h2 class="member-plan__title">连续包年</h2>
+            <p class="member-plan__price"><span class="member-plan__currency">¥</span>68</p>
+            <p class="member-plan__unit">约 365 天 · 更划算</p>
+            <ul class="member-plan__list">
+              <li>VR 导览不限次数</li>
+              <li>长期使用最省</li>
+            </ul>
+            <button type="button" class="btn btn-primary btn-block member-plan__btn" data-plan="year">立即开通</button>
+          </article>
+        </div>
+        <p class="member-pricing-note" id="memberPricingMsg" role="status"></p>
+        <p class="member-pricing-fineprint">说明：会员与 VR 体验次数已保存在服务器，换设备登录同一账号即可同步。</p>
+        <div class="member-pricing-back">
+          <a href="profile" class="btn btn-ghost btn-sm">返回个人主页</a>
+              <a href="vr" class="btn btn-ghost btn-sm">前往 VR 导览</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-brand">智渝游</p>
+    </div>
+  </footer>
+
+  <script src="js/auth-client.js"></script>
+  <script src="js/user-data-api.js"></script>
+  <script src="js/member.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/member-pricing.js" defer></script>
+  <script src="js/float-ai.js?v=20260820" defer></script>
+</body>
+</html>

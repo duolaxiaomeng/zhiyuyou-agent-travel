@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>智渝游 · 个人主页</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=20260820" />
+</head>
+<body class="profile-page">
+  <script src="js/auth-guard.js"></script>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/" aria-label="智渝游首页">
+        <span class="logo-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span>
+        <span class="logo-text">智渝游</span>
+      </a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="site-nav" id="siteNav" aria-label="主导航">
+        <ul class="nav-list">
+          <li><a data-page="index.html" href="/">首页</a></li>
+          <li><a data-page="chat.html" href="chat">渝小智</a></li>
+          <li><a data-page="planner.html" href="planner">AI路线规划</a></li>
+          <li><a data-page="vr.html" href="vr">VR导览</a></li>
+          <li><a data-page="shop.html" href="shop">农产品直购</a></li>
+          <li><a data-page="guide.html" href="guide">交流中心</a></li>
+        </ul>
+        <div class="nav-user" id="navUser"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="section">
+      <div class="container">
+        <div class="profile-shell">
+          <aside class="profile-preview" id="profilePreview">
+            <div class="profile-cover" id="profileCover">
+              <img id="profileCoverImg" alt="" hidden />
+            </div>
+            <div class="profile-head">
+              <div class="profile-avatar" id="profileAvatar">
+                <img id="profileAvatarImg" alt="头像" hidden />
+                <span id="profileAvatarFallback">游</span>
+              </div>
+              <div>
+                <h2 id="profileNamePreview">游客</h2>
+                <p id="profileBioPreview">还没有填写个人简介。</p>
+              </div>
+            </div>
+            <section class="footprint-card" aria-label="足迹点亮">
+              <div class="footprint-head">
+                <h3>足迹点亮 · 重庆区县地图</h3>
+                <button type="button" class="btn btn-ghost btn-sm" id="footprintClear">清空足迹</button>
+              </div>
+              <div class="footprint-toolbar">
+                <label class="footprint-mode-label" for="footprintMode">显示模式</label>
+                <select class="field-select footprint-mode-select" id="footprintMode" aria-label="地图显示模式">
+                  <option value="all" selected>全部区县</option>
+                  <option value="visited">仅已点亮</option>
+                </select>
+                <button type="button" class="btn btn-ghost btn-sm" id="footprintResetView">重置视图</button>
+                <span class="footprint-zoom-hint" title="在地图区域滚轮缩放；按住 Shift 拖拽可平移；空白处双击或点「重置视图」恢复比例">滚轮缩放 · Shift 拖拽平移 · 双击空白重置</span>
+              </div>
+              <p class="footprint-tip">点击地图上的区县版块即可点亮/取消，已点亮区域会自动保存。</p>
+              <div class="footprint-map-viewport" id="footprintMapViewport">
+                <div class="footprint-map" id="footprintMap" role="group" aria-label="重庆区县足迹地图"></div>
+              </div>
+              <p class="footprint-count" id="footprintCount">已点亮 0 / 38</p>
+            </section>
+          </aside>
+
+          <section class="profile-form-card">
+            <form id="profileForm" class="profile-form">
+              <label class="field-label" for="profileUsername">用户名</label>
+              <input class="field-select" id="profileUsername" name="username" maxlength="24" required />
+
+              <label class="field-label" for="profilePhone">手机号</label>
+              <input class="field-select" id="profilePhone" name="phone" maxlength="20" placeholder="例如：13800000000" />
+
+              <label class="field-label" for="profileEmail">邮箱</label>
+              <input class="field-select" id="profileEmail" name="email" maxlength="80" placeholder="例如：name@example.com" />
+
+              <label class="field-label" for="profileBio">个人简介</label>
+              <textarea class="field-select profile-textarea" id="profileBio" name="bio" maxlength="200" placeholder="介绍一下你的旅行偏好、常去区县或兴趣主题"></textarea>
+
+              <span class="field-label">头像</span>
+              <div class="profile-upload-row">
+                <input type="file" id="profileAvatarFile" class="profile-file-input" accept="image/*" aria-label="上传头像" />
+                <button type="button" class="btn btn-ghost btn-sm" id="profileAvatarClear">移除头像</button>
+              </div>
+              <p class="ai-panel-hint profile-upload-hint" id="profileAvatarHint">支持 JPG、PNG、WebP 等，单张建议不超过 5MB。</p>
+
+              <span class="field-label">顶部配图（可选）</span>
+              <div class="profile-upload-row">
+                <input type="file" id="profileCoverFile" class="profile-file-input" accept="image/*" aria-label="上传顶部配图" />
+                <button type="button" class="btn btn-ghost btn-sm" id="profileCoverClear">移除配图</button>
+              </div>
+              <p class="ai-panel-hint profile-upload-hint" id="profileCoverHint">横向大图效果更好；保存时会自动压缩以节省本地空间。</p>
+
+              <div class="profile-actions">
+                <button type="submit" class="btn btn-primary">保存个人资料</button>
+                <button type="button" class="btn btn-ghost" id="profileReset">恢复默认</button>
+              </div>
+              <p class="auth-msg" id="profileMsg"></p>
+            </form>
+          </section>
+
+          <section class="profile-member-card" aria-label="会员与 VR 权益">
+            <h3 class="profile-member-card__title">会员中心 · VR 权益</h3>
+            <p class="profile-member-card__lead">登录用户可免费体验 VR 3D 导览 3 次，开通会员后在有效期内不限次数。</p>
+            <div id="profileMemberInfo" class="profile-member-info"></div>
+            <div class="profile-member-actions">
+              <a href="member-pricing" class="btn btn-primary btn-sm">会员充值详情</a>
+              <a href="vr" class="btn btn-ghost btn-sm">前往 VR 导览</a>
+            </div>
+          </section>
+
+          <section class="profile-saved-wide" aria-label="交流收藏">
+            <div class="profile-saved-tabs" role="tablist" aria-label="喜欢与收藏">
+              <button type="button" class="profile-saved-tab is-active" role="tab" id="profileTabLiked" aria-selected="true" aria-controls="profilePanelLiked" data-tab="liked">我的喜欢</button>
+              <button type="button" class="profile-saved-tab" role="tab" id="profileTabStar" aria-selected="false" aria-controls="profilePanelStar" data-tab="star">我的收藏</button>
+            </div>
+            <div id="profilePanelLiked" class="profile-saved-panel" role="tabpanel" aria-labelledby="profileTabLiked">
+              <div id="profileLikedGrid" class="profile-post-grid"></div>
+            </div>
+            <div id="profilePanelStar" class="profile-saved-panel" role="tabpanel" aria-labelledby="profileTabStar" hidden>
+              <div id="profileStarGrid" class="profile-post-grid"></div>
+            </div>
+          </section>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="profileImageLightbox" class="profile-lightbox" hidden role="dialog" aria-modal="true" aria-labelledby="profileLightboxCaption">
+    <button type="button" class="profile-lightbox__scrim" id="profileLightboxScrim" aria-label="关闭大图预览"></button>
+    <div class="profile-lightbox__frame">
+      <button type="button" class="profile-lightbox__close" id="profileLightboxClose" aria-label="关闭">×</button>
+      <img id="profileLightboxImg" class="profile-lightbox__img" alt="" />
+      <p id="profileLightboxCaption" class="profile-lightbox__caption"></p>
+    </div>
+  </div>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-brand">智渝游</p>
+    </div>
+  </footer>
+
+  <script src="js/auth-client.js"></script>
+  <script src="js/user-data-api.js"></script>
+  <script src="js/member.js"></script>
+  <script src="js/community-data.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/profile.js" defer></script>
+  <script src="js/float-ai.js?v=20260820" defer></script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <title>智渝游 · AI路线规划</title>
+    <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+    <link rel="stylesheet" href="css/main.css?v=20260820" />
+  </head>
+  <body>
+    <script src="js/auth-guard.js"></script>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="logo" href="/">
+          <span class="logo-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span>
+          <span class="logo-text">智渝游</span>
+        </a>
+        <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+          <span class="nav-toggle-bar"></span>
+        </button>
+        <nav class="site-nav" id="siteNav">
+          <ul class="nav-list">
+            <li><a data-page="index.html" href="/">首页</a></li>
+            <li><a data-page="chat.html" href="chat">渝小智</a></li>
+            <li><a data-page="planner.html" href="planner">AI路线规划</a></li>
+            <li><a data-page="vr.html" href="vr">VR导览</a></li>
+            <li><a data-page="shop.html" href="shop">农产品直购</a></li>
+            <li><a data-page="guide.html" href="guide">交流中心</a></li>
+          </ul>
+          <div class="nav-user" id="navUser"></div>
+        </nav>
+      </div>
+    </header>
+
+    <main id="main">
+      <section class="page-hero">
+        <div class="container">
+          <h1>AI 动态路线规划</h1>
+          <p>根据偏好、实时天气、路况与景区承载，生成可解释的重庆乡镇游玩路线。</p>
+        </div>
+      </section>
+
+      <section class="section section-ai" id="ai-planner">
+        <div class="container">
+          <div class="ai-workbench">
+            <div class="ai-panel ai-panel--prefs">
+              <h3 class="ai-panel-title">偏好选择</h3>
+              <div class="pref-chips" id="prefChips" role="group" aria-label="旅行偏好">
+                <button type="button" class="pref-chip" data-pref="family">亲子</button>
+                <button type="button" class="pref-chip" data-pref="photo">摄影</button>
+                <button type="button" class="pref-chip" data-pref="hike">徒步</button>
+                <button type="button" class="pref-chip" data-pref="food">美食</button>
+                <button type="button" class="pref-chip" data-pref="culture">人文</button>
+                <button type="button" class="pref-chip" data-pref="summer">避暑</button>
+              </div>
+
+              <label class="field-label" for="startPoint">出发地 (起点)</label>
+              <input class="field-select field-input-text" type="text" id="startPoint" placeholder="例如：江北机场、成都、我的位置等" />
+
+              <label class="field-label" for="filterDestination">目的地筛选</label>
+              <select class="field-select" id="filterDestination" aria-describedby="filterDestHint">
+                <option value="all">智能推荐（全区域）</option>
+                <option value="yuzhong">渝中区</option>
+                <option value="dadukou">大渡口区</option>
+                <option value="jiangbei">江北区</option>
+                <option value="shapingba">沙坪坝区</option>
+                <option value="jiulongpo">九龙坡区</option>
+                <option value="nanan">南岸区</option>
+                <option value="beibei">北碚区</option>
+                <option value="qijiang">綦江区</option>
+                <option value="dazu">大足区</option>
+                <option value="yubei">渝北区</option>
+                <option value="banan">巴南区</option>
+                <option value="qianjiang">黔江区</option>
+                <option value="changshou">长寿区</option>
+                <option value="jiangjin">江津区</option>
+                <option value="hechuan">合川区</option>
+                <option value="yongchuan">永川区</option>
+                <option value="nanchuan">南川区</option>
+                <option value="bishan">璧山区</option>
+                <option value="tongliang">铜梁区</option>
+                <option value="tongnan">潼南区</option>
+                <option value="rongchang">荣昌区</option>
+                <option value="kaizhou">开州区</option>
+                <option value="liangping">梁平区</option>
+                <option value="wulong">武隆区</option>
+                <option value="wanzhou">万州区</option>
+                <option value="fuling">涪陵区</option>
+                <option value="chengkou">城口县</option>
+                <option value="fengdu">丰都县</option>
+                <option value="dianjiang">垫江县</option>
+                <option value="zhongxian">忠县</option>
+                <option value="yunyang">云阳县</option>
+                <option value="fengjie">奉节县</option>
+                <option value="wushan">巫山县</option>
+                <option value="wuxi">巫溪县</option>
+                <option value="shizhu">石柱土家族自治县</option>
+                <option value="xiushan">秀山土家族苗族自治县</option>
+                <option value="youyang">酉阳土家族苗族自治县</option>
+                <option value="pengshui">彭水苗族土家族自治县</option>
+              </select>
+              <p class="ai-panel-hint" id="filterDestHint">你可以指定一个目的地，也可以交给模型在多个候选里自动匹配。</p>
+
+              <label class="field-label" for="dayBudget">出行天数</label>
+              <select class="field-select" id="dayBudget">
+                <option value="1">1天</option>
+                <option value="2" selected>2天</option>
+                <option value="3">3天</option>
+              </select>
+
+              <label class="field-label" for="groupSize">出行人数</label>
+              <input class="field-select field-input-number" type="number" id="groupSize" name="groupSize" min="1" max="99" value="2" inputmode="numeric" />
+              <p class="ai-panel-hint">人数会影响交通、餐位、步行节奏与节点停留时长估算。</p>
+
+              <button type="button" class="btn btn-primary btn-block ai-gen-btn" id="btnGenerateRoute">生成定制化路线</button>
+
+              <div class="rl-meter" id="rlMeter" hidden>
+                <span class="rl-meter-label">策略探索 · Q 值评估</span>
+                <div class="rl-meter-bar"><span class="rl-meter-fill" id="rlMeterFill"></span></div>
+                <p class="rl-meter-note" id="rlMeterNote"></p>
+              </div>
+            </div>
+
+
+
+            <div class="ai-panel ai-panel--out">
+              <h3 class="ai-panel-title">路线与动态调整结果</h3>
+              <div class="route-plan" id="routePlan" aria-live="polite" aria-label="路线与动态调整正文，内容较多时可在此区域内滚动查看"><p class="route-plan-placeholder">点击左侧按钮开始生成路线。</p></div>
+              <div class="scenic-booking" id="scenicBookingPanel" hidden>
+                <div class="scenic-booking-head">
+                  <h4 class="scenic-booking-title">景区预约入口</h4>
+                  <span class="scenic-booking-badge">购票/预约</span>
+                </div>
+                <div class="scenic-booking-list" id="scenicBookingList" aria-live="polite"></div>
+              </div>
+              <div class="adjust-log" id="adjustLog" hidden>
+                <h4 class="adjust-log-title">动态调整说明</h4>
+                <ul class="adjust-log-list" id="adjustLogList"></ul>
+              </div>
+              <div class="feedback-row" id="feedbackRow" hidden>
+                <span class="feedback-label">你觉得本次推荐如何？</span>
+                <div class="feedback-btns">
+                  <button type="button" class="btn btn-ghost btn-sm" id="btnFeedbackGood">很有帮助</button>
+                  <button type="button" class="btn btn-ghost btn-sm" id="btnFeedbackBad">不太满意</button>
+                </div>
+                <p class="feedback-score" id="feedbackScore">策略置信度待更新</p>
+              </div>
+            </div>
+
+
+
+
+
+            <div class="ai-panel ai-panel--live">
+              <h3 class="ai-panel-title">实时态势</h3>
+              <div class="live-cards">
+                <div class="live-card">
+                  <span class="live-card-k">实时天气</span>
+                  <p class="live-card-v" id="liveWeather">等待查询</p>
+                  <p class="live-card-sub" id="liveWeatherSub"></p>
+                </div>
+                <div class="live-card">
+                  <span class="live-card-k">天气分析与建议</span>
+                  <p class="live-card-v" id="liveTraffic" style="font-size: 14px; white-space: normal;">--</p>
+                  <p class="live-card-sub">大模型实时分析</p>
+                </div>
+                <div class="live-card">
+                  <span class="live-card-k">穿衣建议</span>
+                  <p class="live-card-v" id="liveCapacity" style="font-size: 14px; white-space: normal;">--</p>
+                  <p class="live-card-sub" id="liveCapacitySub">结合天气推荐着装</p>
+                </div>
+              </div>
+
+              <button type="button" class="btn btn-ghost btn-block" id="btnRefreshLive">刷新实时态势</button>
+              <p class="live-updated" id="liveUpdated">等待更新...</p>
+
+
+              <div class="ai-panel ai-panel--farm" id="localFarmPanel" hidden>
+                <h3 class="ai-panel-title">当地农产品推荐</h3>
+                <p class="ai-panel-hint" id="localFarmHint">根据你的目的地，为你精选助农好物；可选择加入购物车。</p>
+                <div class="farm-grid local-farm-grid" id="localFarmGrid" aria-live="polite"></div>
+              </div>
+            </div>
+
+
+
+
+
+
+
+
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <p class="footer-brand">智渝游</p>
+      </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/marked@12.0.0/marked.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3.0.9/dist/purify.min.js" crossorigin="anonymous"></script>
+    <script src="js/auth-client.js" defer></script>
+    <script src="js/user-data-api.js" defer></script>
+    <script src="js/member.js" defer></script>
+    <script src="js/main.js" defer></script>
+    <script src="js/features.js" defer></script>
+    <script src="js/aiplanning.js" defer></script>
+    <script src="js/float-ai.js?v=20260820" defer></script>
+  </body>
+</html>

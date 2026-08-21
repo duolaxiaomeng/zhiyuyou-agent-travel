@@ -1,0 +1,8 @@
+node_modules/
+data/users.json
+.env
+.env.local
+.idea/
+*.log
+data/agent-config.json
+data/chat-sessions/

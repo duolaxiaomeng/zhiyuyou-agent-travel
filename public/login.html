@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>智渝游 · 登录</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=20260820" />
+</head>
+<body class="login-page">
+  <div class="login-bg" aria-hidden="true">
+    <div class="login-bg-photo"></div>
+    <div class="login-bg-tint"></div>
+  </div>
+  <header class="site-header"><div class="header-inner"><a class="logo" href="/"><span class="logo-mark"><img src="assets/logo.jpg" alt="" /></span><span class="logo-text">智渝游</span></a></div></header>
+  <main class="auth-wrap">
+    <section class="auth-card">
+      <h1>登录账号</h1>
+      <p>登录后可使用路线规划、直购与个性化能力。</p>
+      <form class="auth-form" id="loginForm">
+        <input class="cta-input" id="loginPhone" type="tel" placeholder="手机号" />
+        <input class="cta-input" id="loginPassword" type="password" placeholder="密码" />
+        <button class="btn btn-primary btn-block" type="submit">登录</button>
+      </form>
+      <p class="auth-msg" id="loginMsg"></p>
+      <p class="section-desc">还没有账号？<a href="register" id="linkToRegister">去注册</a></p>
+    </section>
+  </main>
+  <script src="js/auth-client.js"></script>
+  <script src="js/auth.js" defer></script>
+</body>
+</html>

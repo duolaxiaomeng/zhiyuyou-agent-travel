@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>智渝游 · 渝小智 AI 会话</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=20260820r" />
+</head>
+<body class="chat-page">
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/" aria-label="智渝游首页">
+        <span class="logo-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span>
+        <span class="logo-text">智渝游</span>
+      </a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+        <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="site-nav" id="siteNav" aria-label="主导航">
+        <ul class="nav-list">
+          <li><a data-page="index.html" href="/">首页</a></li>
+          <li><a data-page="chat.html" href="chat">渝小智</a></li>
+          <li><a data-page="planner.html" href="planner">AI路线规划</a></li>
+          <li><a data-page="vr.html" href="vr">VR导览</a></li>
+          <li><a data-page="shop.html" href="shop">农产品直购</a></li>
+          <li><a data-page="guide.html" href="guide">交流中心</a></li>
+        </ul>
+        <div class="nav-user" id="navUser"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main class="chat-main">
+    <div class="chat-layout">
+      <aside class="chat-sidebar" id="chatSidebar">
+        <button type="button" class="btn btn-primary chat-new" id="chatNew">+ 新建会话</button>
+        <ul class="chat-session-list" id="chatSessionList"></ul>
+      </aside>
+      <section class="chat-shell">
+        <header class="chat-head">
+          <div>
+            <h1>渝小智 · AI 会话</h1>
+            <p>重庆旅游 Agent,可查询景点预约入口与站内农产品。</p>
+          </div>
+        </header>
+
+        <div class="chat-msgs" id="chatMsgs" aria-live="polite">
+          <div class="chat-msg chat-msg--bot">
+            <div class="chat-bubble">你好,我是渝小智。可以问我重庆景点预约、农产品直购,或者让我帮你规划行程。</div>
+          </div>
+        </div>
+
+        <form class="chat-form" id="chatForm">
+          <input id="chatInput" type="text" autocomplete="off" placeholder="问点什么,比如:洪崖洞怎么预约?" />
+          <button type="button" id="chatMic" class="chat-mic" aria-label="语音输入" hidden>🎤</button>
+          <button type="submit" id="chatSend" class="btn btn-primary">发送</button>
+        </form>
+      </section>
+    </div>
+  </main>
+
+  <button type="button" class="chat-settings-fab" id="chatSettingsFab" aria-label="模型设置(管理员)" hidden>⚙</button>
+
+  <div class="chat-settings-mask" id="chatSettingsMask" hidden>
+    <section class="chat-settings" role="dialog" aria-modal="true" aria-label="模型设置">
+      <header class="chat-settings-head">
+        <h2>模型设置</h2>
+        <button type="button" id="chatSettingsClose" aria-label="关闭">×</button>
+      </header>
+      <div class="chat-settings-body">
+        <label class="chat-field">
+          <span>服务商</span>
+          <select id="setProvider">
+            <option value="deepseek">DeepSeek</option>
+            <option value="xiaomi">小米 MiMo</option>
+            <option value="custom">自定义(OpenAI 兼容)</option>
+          </select>
+        </label>
+        <label class="chat-field">
+          <span>API Key</span>
+          <input id="setApiKey" type="password" placeholder="sk-..." autocomplete="off" />
+        </label>
+        <label class="chat-field" id="setModelField">
+          <span>模型</span>
+          <select id="setModel"></select>
+          <input id="setModelCustom" type="text" placeholder="自定义模型 ID" hidden />
+        </label>
+        <label class="chat-field">
+          <span>Base URL</span>
+          <input id="setBaseURL" type="text" placeholder="https://api.deepseek.com/v1" />
+        </label>
+        <p class="chat-settings-tip">该配置保存在服务器,仅管理员可见与修改;普通用户登录后直接使用,无法看到 API Key。</p>
+      </div>
+      <footer class="chat-settings-foot">
+        <button type="button" class="btn btn-primary" id="chatSettingsSave">保存</button>
+      </footer>
+    </section>
+  </div>
+
+  <script src="js/auth-client.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/chat.js?v=20260820k" defer></script>
+</body>
+</html>

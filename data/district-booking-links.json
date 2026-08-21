@@ -1,0 +1,268 @@
+[
+  {
+    "destinationId": "yuzhong",
+    "district": "渝中区",
+    "bookingUrl": "http://www.hongyan.info",
+    "platform": "红岩革命纪念馆官网",
+    "note": "红岩革命纪念馆官网；洪崖洞可用微信小程序/公众号“洪崖洞”，长江索道可用公众号“重庆索道公司”，三峡博物馆官网为 https://www.3gmuseum.cn/"
+  },
+  {
+    "destinationId": "dadukou",
+    "district": "大渡口区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "jiangbei",
+    "district": "江北区",
+    "bookingUrl": "http://www.cqkjg.cn",
+    "platform": "重庆科技馆官网",
+    "note": "重庆科技馆官网；也可通过公众号“重庆科技馆”预约"
+  },
+  {
+    "destinationId": "shapingba",
+    "district": "沙坪坝区",
+    "bookingUrl": "http://www.hongyan.info",
+    "platform": "红岩革命纪念馆官网",
+    "note": "歌乐山烈士陵园/白公馆/渣滓洞预约可通过微信小程序“红岩博物馆”；磁器口古镇可关注公众号“磁器口古镇”"
+  },
+  {
+    "destinationId": "jiulongpo",
+    "district": "九龙坡区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "华岩旅游区/华岩寺暂无明确独立预约网址；可现场购票或后续补充官网/票务平台链接"
+  },
+  {
+    "destinationId": "nanan",
+    "district": "南岸区",
+    "bookingUrl": "http://www.cqnsbg.cn/cqnsbg/index.html",
+    "platform": "南山植物园官网",
+    "note": "南山植物园官网；也可通过携程、美团等平台预约"
+  },
+  {
+    "destinationId": "beibei",
+    "district": "北碚区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "qijiang",
+    "district": "綦江区",
+    "bookingUrl": "https://www.cqqj.gov.cn/zjqj_159/",
+    "platform": "綦江区官方旅游页面",
+    "note": "古剑山景区入口；也可通过公众号“重庆綦江地质公园”预约"
+  },
+  {
+    "destinationId": "dazu",
+    "district": "大足区",
+    "bookingUrl": "https://www.dzskyjy.cn/index.html",
+    "platform": "大足石刻官网",
+    "note": "大足石刻官网；也可通过公众号“大足石刻”或 OTA 平台预约购票"
+  },
+  {
+    "destinationId": "yubei",
+    "district": "渝北区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "banan",
+    "district": "巴南区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "qianjiang",
+    "district": "黔江区",
+    "bookingUrl": "http://www.qjzsjq.com/html/jqgk/gk/",
+    "platform": "黔江濯水景区官网",
+    "note": "濯水古镇/蒲花暗河/芭拉胡官网；也可通过公众号“黔江濯水景区”预约。神龟峡参考 https://www.qianjiang.gov.cn/zjqj/qjhc/201912/t20191210_958754.html"
+  },
+  {
+    "destinationId": "changshou",
+    "district": "长寿区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "jiangjin",
+    "district": "江津区",
+    "bookingUrl": "https://www.cqsms.net",
+    "platform": "四面山旅游官网",
+    "note": "四面山景区官网；也可通过公众号“四面山旅游”预约"
+  },
+  {
+    "destinationId": "hechuan",
+    "district": "合川区",
+    "bookingUrl": "https://www.hcdyc.cn/dyc/index.html",
+    "platform": "钓鱼城景区官网",
+    "note": "钓鱼城景区/涞滩古镇入口；也可通过携程、美团、现场购票或 OTA 平台预约"
+  },
+  {
+    "destinationId": "yongchuan",
+    "district": "永川区",
+    "bookingUrl": "https://www.cqyc.gov.cn/zjyc/ycwl/",
+    "platform": "永川文旅官方页面",
+    "note": "乐和乐都、茶山竹海等区县文旅入口；乐和乐都可通过公众号“乐和乐都”预约"
+  },
+  {
+    "destinationId": "nanchuan",
+    "district": "南川区",
+    "bookingUrl": "http://www.917jfs.cn/about1/",
+    "platform": "金佛山景区官网",
+    "note": "金佛山景区官网；也可通过公众号“金佛山景区”预约"
+  },
+  {
+    "destinationId": "bishan",
+    "district": "璧山区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "tongliang",
+    "district": "铜梁区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "tongnan",
+    "district": "潼南区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "rongchang",
+    "district": "荣昌区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "kaizhou",
+    "district": "开州区",
+    "bookingUrl": "http://cqkzhfh.com",
+    "platform": "汉丰湖景区官网",
+    "note": "汉丰湖景区官网；也可现场购票"
+  },
+  {
+    "destinationId": "liangping",
+    "district": "梁平区",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "wulong",
+    "district": "武隆区",
+    "bookingUrl": "https://www.wlkst.com",
+    "platform": "武隆旅游网",
+    "note": "天生三桥/仙女山/芙蓉洞官方入口；也可通过公众号“武隆旅游”预约"
+  },
+  {
+    "destinationId": "wanzhou",
+    "district": "万州区",
+    "bookingUrl": "https://www.wz.gov.cn/zjwz/",
+    "platform": "万州区官方旅游页面",
+    "note": "万州旅游入口；万州大瀑布可关注公众号“万州大瀑布”"
+  },
+  {
+    "destinationId": "fuling",
+    "district": "涪陵区",
+    "bookingUrl": "https://www.tuniu.com/menpiao/1831883",
+    "platform": "途牛门票",
+    "note": "武陵山大裂谷门票预订页；请确认当前可售票种、索道和交通套票规则"
+  },
+  {
+    "destinationId": "chengkou",
+    "district": "城口县",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "fengdu",
+    "district": "丰都县",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "丰都鬼城/南天湖暂无明确官网预约网址；可关注公众号“丰都旅游”"
+  },
+  {
+    "destinationId": "dianjiang",
+    "district": "垫江县",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "zhongxian",
+    "district": "忠县",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "石宝寨景区暂无明确官网预约网址；文档备注为现场购票"
+  },
+  {
+    "destinationId": "yunyang",
+    "district": "云阳县",
+    "bookingUrl": "https://cqyylg.com/index.aspx",
+    "platform": "云阳龙缸景区官网",
+    "note": "云阳龙缸景区官网；也可通过公众号“云阳龙缸景区”预约"
+  },
+  {
+    "destinationId": "fengjie",
+    "district": "奉节县",
+    "bookingUrl": "https://www.bdcqtx.com/",
+    "platform": "白帝城瞿塘峡景区官网",
+    "note": "官网含官方购票/门票预约入口；进入后选择对应票种。你提供的文档备注为“网址打不开”，如确认不可用可改为空"
+  },
+  {
+    "destinationId": "wushan",
+    "district": "巫山县",
+    "bookingUrl": "https://m.dahepiao.com/jingqu/wsxsxdz/",
+    "platform": "大河票务",
+    "note": "巫山小三峡相关票务页；船游项目请按预约规则登船"
+  },
+  {
+    "destinationId": "wuxi",
+    "district": "巫溪县",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "shizhu",
+    "district": "石柱土家族自治县",
+    "bookingUrl": "",
+    "platform": "",
+    "note": "待补充该区县常用预约/购票入口"
+  },
+  {
+    "destinationId": "xiushan",
+    "district": "秀山土家族苗族自治县",
+    "bookingUrl": "https://www.cqxs.gov.cn/xsxq_207/",
+    "platform": "秀山县官方旅游页面",
+    "note": "秀山旅游网入口；文档备注为现场购票"
+  },
+  {
+    "destinationId": "youyang",
+    "district": "酉阳土家族苗族自治县",
+    "bookingUrl": "http://zgyythy.com",
+    "platform": "酉阳桃花源官网",
+    "note": "酉阳桃花源官网；也可通过公众号“酉阳桃花源”预约"
+  },
+  {
+    "destinationId": "pengshui",
+    "district": "彭水苗族土家族自治县",
+    "bookingUrl": "http://www.ayhjq.com/spots/?lang=zh-cn",
+    "platform": "阿依河景区官网",
+    "note": "阿依河景区官网；可通过官网、官微或 OTA 平台预约"
+  }
+]

@@ -1,0 +1,508 @@
+(function () {
+  if (typeof window !== "undefined" && !window.ZYYProfileExtraCache) {
+    window.ZYYProfileExtraCache = {};
+  }
+
+  var PROFILE_EXTRA_KEY = "zyyUserProfileExtra";
+  /** 与 server.js 中 ADMIN_PHONE 一致 */
+  var ADMIN_PHONE = "12345678910";
+
+  function injectAdminNavLink() {
+    var user = window.ZYYAuth && typeof window.ZYYAuth.getStoredUser === "function" ? window.ZYYAuth.getStoredUser() : null;
+    var phone = user && user.phone ? String(user.phone) : "";
+    document.querySelectorAll(".nav-list").forEach(function (ul) {
+      var liOld = ul.querySelector("li[data-zyy-admin-nav]");
+      if (phone === ADMIN_PHONE) {
+        if (!liOld) {
+          var li = document.createElement("li");
+          li.setAttribute("data-zyy-admin-nav", "1");
+          var cur = window.location.pathname.split("/").pop() || "index.html";
+          li.innerHTML =
+            '<a data-page="admin-orders.html" href="admin-orders">后台订单管理</a>';
+          ul.appendChild(li);
+          var a = li.querySelector("a[data-page]");
+          if (a && a.getAttribute("data-page") === cur) {
+            a.classList.add("is-active");
+          }
+        } else {
+          liOld.querySelectorAll("a[data-page]").forEach(function (link) {
+            if (link.getAttribute("data-page") === (window.location.pathname.split("/").pop() || "index.html")) {
+              link.classList.add("is-active");
+            } else {
+              link.classList.remove("is-active");
+            }
+          });
+        }
+      } else if (liOld) {
+        liOld.remove();
+      }
+    });
+  }
+
+  function initTopSearch() {
+    var headerInner = document.querySelector(".site-header .header-inner");
+    if (!headerInner || document.getElementById("topSearchWrap")) return;
+
+    var entries = [
+      { title: "AI 路线规划", desc: "按天数、人数与偏好生成行程", url: "planner", tags: "路线 规划 行程" },
+      { title: "VR 3D 导览", desc: "选择景点查看沉浸全景与解说", url: "vr", tags: "VR 3D 模型 景点 全景" },
+      { title: "农产品直购", desc: "重庆乡镇特产在线选购", url: "shop", tags: "特产 直购 蜂蜜 榨菜 腊肉 米花糖 农产品" },
+      { title: "我的订单", desc: "查看订单状态与下单时间", url: "orders", tags: "订单 发货 支付 购买 记录" },
+      { title: "交流中心", desc: "瀑布流浏览目的地分享与热帖", url: "guide", tags: "交流 分享 目的地 风景 路线 餐厅 酒店 热帖" },
+      { title: "发布分享", desc: "发布路线风景与食宿体验", url: "community-publish", tags: "发布 分享 交流 帖子" },
+    ];
+
+    // 站内“区县/景点”覆盖：根据输入关键词，返回对应入口（酒店推荐/路线规划/VR场景）
+    var districtHotelRegion = {
+      yuzhong: "cq",
+      dadukou: "cq",
+      jiangbei: "cq",
+      shapingba: "cq",
+      jiulongpo: "cq",
+      nanan: "cq",
+      beibei: "cq",
+      qijiang: "se",
+      dazu: "cq",
+      yubei: "cq",
+      banan: "cq",
+      qianjiang: "se",
+      changshou: "sx",
+      jiangjin: "cq",
+      hechuan: "cq",
+      yongchuan: "cq",
+      nanchuan: "cq",
+      bishan: "cq",
+      tongliang: "cq",
+      tongnan: "cq",
+      rongchang: "cq",
+      kaizhou: "sx",
+      liangping: "sx",
+      wulong: "wl",
+      wanzhou: "sx",
+      fuling: "sx",
+      chengkou: "sx",
+      fengdu: "sx",
+      dianjiang: "sx",
+      zhongxian: "sx",
+      yunyang: "sx",
+      fengjie: "sx",
+      wushan: "sx",
+      wuxi: "sx",
+      shizhu: "se",
+      xiushan: "se",
+      youyang: "se",
+      pengshui: "se",
+    };
+
+    var districts = [
+      { value: "yuzhong", title: "渝中区" },
+      { value: "dadukou", title: "大渡口区" },
+      { value: "jiangbei", title: "江北区" },
+      { value: "shapingba", title: "沙坪坝区" },
+      { value: "jiulongpo", title: "九龙坡区" },
+      { value: "nanan", title: "南岸区" },
+      { value: "beibei", title: "北碚区" },
+      { value: "qijiang", title: "綦江区" },
+      { value: "dazu", title: "大足区" },
+      { value: "yubei", title: "渝北区" },
+      { value: "banan", title: "巴南区" },
+      { value: "qianjiang", title: "黔江区" },
+      { value: "changshou", title: "长寿区" },
+      { value: "jiangjin", title: "江津区" },
+      { value: "hechuan", title: "合川区" },
+      { value: "yongchuan", title: "永川区" },
+      { value: "nanchuan", title: "南川区" },
+      { value: "bishan", title: "璧山区" },
+      { value: "tongliang", title: "铜梁区" },
+      { value: "tongnan", title: "潼南区" },
+      { value: "rongchang", title: "荣昌区" },
+      { value: "kaizhou", title: "开州区" },
+      { value: "liangping", title: "梁平区" },
+      { value: "wulong", title: "武隆区" },
+      { value: "wanzhou", title: "万州区" },
+      { value: "fuling", title: "涪陵区" },
+      { value: "chengkou", title: "城口县" },
+      { value: "fengdu", title: "丰都县" },
+      { value: "dianjiang", title: "垫江县" },
+      { value: "zhongxian", title: "忠县" },
+      { value: "yunyang", title: "云阳县" },
+      { value: "fengjie", title: "奉节县" },
+      { value: "wushan", title: "巫山县" },
+      { value: "wuxi", title: "巫溪县" },
+      { value: "shizhu", title: "石柱土家族自治县" },
+      { value: "xiushan", title: "秀山土家族苗族自治县" },
+      { value: "youyang", title: "酉阳土家族苗族自治县" },
+      { value: "pengshui", title: "彭水苗族土家族自治县" },
+    ];
+
+    districts.forEach(function (d) {
+      var hotelRegion = districtHotelRegion[d.value] || "cq";
+      // 酒店推荐入口（首页酒店推荐区域）
+      entries.push({
+        title: d.title + "酒店推荐",
+        desc: "查看 " + d.title + " 对应的酒店与民宿推荐",
+        url: "/?hotelRegion=" + hotelRegion,
+        tags: d.title + " 酒店 民宿 " + hotelRegion,
+      });
+      // 路线规划入口
+      entries.push({
+        title: d.title + "路线规划",
+        desc: "为 " + d.title + " 生成可执行重庆乡镇行程",
+        url: "planner?destination=" + d.value,
+        tags: d.title + " 路线 行程 规划",
+      });
+    });
+
+    // VR 场景入口（与 vr.html 的 spot 参数对应）
+    var vrSpots = [
+      { title: "文峰古街", spot: "wenfeng", desc: "合川 · 文峰古街沉浸全景", tags: "文峰 文峰古街 合川 古街" },
+      { title: "洪安古镇", spot: "hongan", desc: "秀山 · 洪安古镇沉浸全景", tags: "洪安 洪安古镇 边城 秀山" },
+      { title: "磁器口古镇", spot: "ciqikou", desc: "沙坪坝 · 磁器口沉浸全景", tags: "磁器口 磁器口古镇 古镇 沙坪坝" },
+      { title: "洪崖洞", spot: "hongyadong", desc: "渝中 · 洪崖洞夜景沉浸全景", tags: "洪崖洞 洪崖洞夜景 解放碑" },
+      { title: "大足石刻", spot: "dazu", desc: "大足 · 石窟艺术沉浸全景", tags: "大足 石刻 世界文化遗产" },
+      { title: "武隆天生三桥", spot: "wulong", desc: "武隆 · 喀斯特地貌沉浸全景", tags: "武隆 三桥 徒步 摄影" },
+      { title: "万州青龙瀑布", spot: "wanzhou", desc: "万州 · 山水景观沉浸全景", tags: "万州 青龙瀑布 大瀑布" },
+    ];
+
+    vrSpots.forEach(function (s) {
+      entries.push({
+        title: s.title + "VR全景",
+        desc: s.desc,
+        url: "vr?spot=" + s.spot,
+        tags: s.tags,
+      });
+    });
+
+    var wrap = document.createElement("div");
+    wrap.className = "top-search";
+    wrap.id = "topSearchWrap";
+    wrap.innerHTML =
+      '<form class="top-search-form" id="topSearchForm" role="search">' +
+      '<input id="topSearchInput" type="search" placeholder="搜索景点 / 路线 / 区县" aria-label="站内搜索" />' +
+      '<button type="submit">搜索</button>' +
+      "</form>" +
+      '<div class="top-search-results" id="topSearchResults" hidden></div>';
+
+    var nav = document.getElementById("siteNav");
+    headerInner.insertBefore(wrap, nav || null);
+
+    var form = document.getElementById("topSearchForm");
+    var input = document.getElementById("topSearchInput");
+    var results = document.getElementById("topSearchResults");
+
+    function normalize(s) {
+      return String(s || "").toLowerCase();
+    }
+
+    function queryEntries(keyword) {
+      var k = normalize(keyword).trim();
+      if (!k) return [];
+      return entries
+        .filter(function (e) {
+          return normalize(e.title + " " + e.desc + " " + e.tags).indexOf(k) !== -1;
+        })
+        .slice(0, 6);
+    }
+
+    function renderResults(list, keyword) {
+      if (!list.length) {
+        results.innerHTML =
+          '<div class="top-search-empty">未找到“' + keyword.replace(/</g, "&lt;") + '”相关内容</div>';
+        results.hidden = false;
+        return;
+      }
+      var html = '<ul class="top-search-list">';
+      list.forEach(function (item) {
+        html +=
+          '<li><a href="' +
+          item.url +
+          '"><strong>' +
+          item.title +
+          "</strong><span>" +
+          item.desc +
+          "</span></a></li>";
+      });
+      html += "</ul>";
+      results.innerHTML = html;
+      results.hidden = false;
+    }
+
+    function handleSearch() {
+      var q = (input.value || "").trim();
+      if (!q) {
+        results.hidden = true;
+        results.innerHTML = "";
+        return;
+      }
+      renderResults(queryEntries(q), q);
+    }
+
+    input.addEventListener("input", handleSearch);
+    form.addEventListener("submit", function (e) {
+      e.preventDefault();
+      handleSearch();
+    });
+
+    document.addEventListener("click", function (e) {
+      if (!wrap.contains(e.target)) {
+        results.hidden = true;
+      }
+    });
+  }
+
+  initTopSearch();
+
+  var toggle = document.getElementById("navToggle");
+  var nav = document.getElementById("siteNav");
+  var current = window.location.pathname.split("/").pop() || "index.html";
+  if (current.indexOf(".") === -1) current += ".html"; // 简洁 URL(如 /chat)按对应页面名匹配高亮
+
+  if (toggle && nav) {
+    function setOpen(open) {
+      toggle.setAttribute("aria-expanded", open ? "true" : "false");
+      toggle.setAttribute("aria-label", open ? "关闭菜单" : "打开菜单");
+      nav.classList.toggle("is-open", open);
+      document.body.classList.toggle("nav-open", open);
+    }
+
+    toggle.addEventListener("click", function () {
+      var expanded = toggle.getAttribute("aria-expanded") === "true";
+      setOpen(!expanded);
+    });
+
+    nav.querySelectorAll("a").forEach(function (link) {
+      link.addEventListener("click", function () {
+        if (window.matchMedia("(max-width: 1023px)").matches) {
+          setOpen(false);
+        }
+      });
+    });
+
+    window.addEventListener("resize", function () {
+      if (window.innerWidth > 1023) {
+        setOpen(false);
+      }
+    });
+
+    nav.querySelectorAll("a[data-page]").forEach(function (link) {
+      if (link.getAttribute("data-page") === current) {
+        link.classList.add("is-active");
+      }
+    });
+    injectAdminNavLink();
+  }
+
+  function escapeNavHtml(s) {
+    return String(s || "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  /** 与个人主页一致：合并本地扩展资料里的头像/昵称（避免 /api/me 覆盖掉已保存的头像） */
+  function getMergedProfileForNav() {
+    if (!window.ZYYAuth) return null;
+    if (typeof window.ZYYAuth.clearStaleProfileExtraIfNeeded === "function") {
+      window.ZYYAuth.clearStaleProfileExtraIfNeeded();
+    }
+    var user = window.ZYYAuth.getStoredUser();
+    if (!user) return null;
+    var extra = {};
+    if (window.ZYYProfileExtraCache && typeof window.ZYYProfileExtraCache === "object") {
+      extra = window.ZYYProfileExtraCache;
+    } else {
+      try {
+        extra = JSON.parse(localStorage.getItem(PROFILE_EXTRA_KEY) || "{}");
+      } catch (e) {}
+    }
+    if (typeof window.ZYYAuth.profileExtraBelongsToUser === "function" && !window.ZYYAuth.profileExtraBelongsToUser(user, extra)) {
+      extra = {};
+    }
+    var username = String(extra.username || user.username || "").trim();
+    if (!username) return null;
+    var avatar = String(extra.avatar || user.avatar || "").trim();
+    return { username: username, avatar: avatar };
+  }
+
+  function renderNavUser(profile) {
+    var navUser = document.getElementById("navUser");
+    if (!navUser) return;
+    if (profile && profile.username) {
+      var avatar = String(profile.avatar || "").trim();
+      var initial = profile.username.slice(0, 1) || "游";
+      var avatarSrc = avatar || "assets/profile-default-avatar.png";
+      var safeAvatar =
+        '<img class="nav-user-avatar" src="' + avatarSrc.replace(/"/g, "&quot;") + '" alt="" />';
+      navUser.innerHTML =
+        safeAvatar +
+        '<a href="profile" class="nav-auth-link">个人主页</a><span class="nav-user-text">你好，' +
+        escapeNavHtml(profile.username) +
+        '</span><button type="button" class="nav-logout" id="navLogout">退出</button>';
+      var imgEl = navUser.querySelector("img.nav-user-avatar");
+      if (imgEl) {
+        imgEl.addEventListener("error", function onAvatarErr() {
+          imgEl.removeEventListener("error", onAvatarErr);
+          var span = document.createElement("span");
+          span.className = "nav-user-avatar nav-user-avatar--placeholder";
+          span.textContent = initial;
+          if (imgEl.parentNode) imgEl.parentNode.replaceChild(span, imgEl);
+        });
+      }
+      var btnLogout = document.getElementById("navLogout");
+      if (btnLogout) {
+        btnLogout.addEventListener("click", function () {
+          if (window.ZYYAuth && typeof window.ZYYAuth.clearSession === "function") {
+            window.ZYYAuth.clearSession();
+          } else {
+            localStorage.removeItem("zyyToken");
+            localStorage.removeItem("zyyCurrentUser");
+          }
+          window.location.reload();
+        });
+      }
+      injectAdminNavLink();
+    } else {
+      var loginHref = "login?redirect=" + encodeURIComponent(current);
+      var regHref = "register?redirect=" + encodeURIComponent(current);
+      navUser.innerHTML =
+        '<a href="' +
+        loginHref +
+        '" class="nav-auth-link">登录</a><a href="' +
+        regHref +
+        '" class="nav-auth-link">注册</a>';
+      injectAdminNavLink();
+    }
+  }
+
+  var navUserEl = document.getElementById("navUser");
+  if (navUserEl && window.ZYYAuth) {
+    var stored = window.ZYYAuth.getStoredUser();
+    var token = window.ZYYAuth.getToken();
+    if (token && !stored) {
+      window.ZYYAuth.fetchMe()
+        .then(function (data) {
+          if (data && data.user) {
+            try {
+              if (typeof window.ZYYAuth.clearStaleProfileExtraIfNeeded === "function") {
+                window.ZYYAuth.clearStaleProfileExtraIfNeeded(data.user);
+              }
+              var extra = {};
+              if (window.ZYYProfileExtraCache && typeof window.ZYYProfileExtraCache === "object") {
+                extra = window.ZYYProfileExtraCache;
+              } else {
+                extra = JSON.parse(localStorage.getItem(PROFILE_EXTRA_KEY) || "{}");
+              }
+              var u = Object.assign({}, data.user);
+              var belongs =
+                  typeof window.ZYYAuth.profileExtraBelongsToUser !== "function" ||
+                  window.ZYYAuth.profileExtraBelongsToUser(data.user, extra);
+              if (belongs) {
+                if (extra.avatar) u.avatar = extra.avatar;
+                if (extra.username && String(extra.username).trim()) {
+                  u.username = String(extra.username).trim();
+                }
+              }
+              localStorage.setItem("zyyCurrentUser", JSON.stringify(u));
+            } catch (e) {
+              try {
+                localStorage.setItem("zyyCurrentUser", JSON.stringify(data.user));
+              } catch (e2) {}
+            }
+            renderNavUser(getMergedProfileForNav());
+          } else {
+            renderNavUser(null);
+          }
+        })
+        .catch(function () {
+          renderNavUser(null);
+        });
+    } else {
+      renderNavUser(getMergedProfileForNav());
+    }
+
+    window.addEventListener("storage", function (e) {
+      if (!document.getElementById("navUser")) return;
+      if (e.key === "zyyCurrentUser" || e.key === PROFILE_EXTRA_KEY) {
+        renderNavUser(getMergedProfileForNav());
+      }
+    });
+
+    window.ZYYRefreshNavUser = function () {
+      if (!window.ZYYAuth || !document.getElementById("navUser")) return;
+      renderNavUser(getMergedProfileForNav());
+    };
+
+    if (token && window.ZYYUserData && window.ZYYUserData.loadProfileExtra) {
+      window.ZYYUserData
+          .importLegacyOnce()
+          .then(function () {
+            return window.ZYYUserData.loadProfileExtra();
+          })
+          .then(function (ex) {
+            if (typeof window.ZYYAuth.clearStaleProfileExtraIfNeeded === "function") {
+              window.ZYYAuth.clearStaleProfileExtraIfNeeded();
+            }
+            var serverEx = ex && typeof ex === "object" && !Array.isArray(ex) ? ex : {};
+            var localEx = {};
+            try {
+              localEx = JSON.parse(localStorage.getItem(PROFILE_EXTRA_KEY) || "{}");
+            } catch (e) {}
+            window.ZYYProfileExtraCache = Object.assign({}, localEx, serverEx);
+            try {
+              localStorage.setItem(PROFILE_EXTRA_KEY, JSON.stringify(window.ZYYProfileExtraCache));
+            } catch (e2) {}
+            renderNavUser(getMergedProfileForNav());
+          })
+          .catch(function () {});
+    }
+  }
+})();
+
+/* === 巴渝山水·编辑风 — 滚动入场动画 === */
+(function () {
+  "use strict";
+  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+  var selectors = [
+    ".section-head",
+    ".place-card",
+    ".culture-item",
+    ".route-block",
+    ".tip",
+    ".farm-card",
+    ".ai-intro-card",
+    ".home-quick-card",
+    ".home-rec-block",
+    ".cta-inner",
+    ".ar-scan-card",
+    ".ar-story",
+    ".community-card--dp"
+  ];
+
+  var elements = document.querySelectorAll(selectors.join(","));
+  elements.forEach(function (el) {
+    el.classList.add("reveal");
+  });
+
+  document.querySelectorAll(
+    ".card-grid, .culture-list, .routes, .tips-grid, .farm-grid, .ai-intro-grid, .home-booking-quicks"
+  ).forEach(function (grid) {
+    grid.classList.add("reveal-stagger");
+  });
+
+  var observer = new IntersectionObserver(
+    function (entries) {
+      entries.forEach(function (entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add("is-visible");
+          observer.unobserve(entry.target);
+        }
+      });
+    },
+    { threshold: 0.12, rootMargin: "0px 0px -60px 0px" }
+  );
+
+  elements.forEach(function (el) {
+    observer.observe(el);
+  });
+})();

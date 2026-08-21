@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>智渝游 · 分享详情</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=20260820" />
+</head>
+<body class="cdetail-page">
+  <div id="cdetailApp" class="cdetail-app" hidden>
+    <header class="cdetail-topbar">
+      <a class="cdetail-back" href="guide" aria-label="返回">‹</a>
+      <div class="cdetail-author">
+        <span class="cdetail-author-avatar" id="cdetailAvatar">游</span>
+        <span class="cdetail-author-name" id="cdetailAuthor">—</span>
+      </div>
+      <button type="button" class="cdetail-follow" id="cdetailFollow">立即关注</button>
+      <button type="button" class="cdetail-share" id="cdetailShare" aria-label="分享">⎘</button>
+    </header>
+
+    <main class="cdetail-scroll">
+      <figure class="cdetail-hero">
+        <img id="cdetailImg" src="" alt="" />
+        <span class="cdetail-hero-badge" aria-hidden="true">相册</span>
+      </figure>
+
+      <article class="cdetail-article">
+        <h1 class="cdetail-title" id="cdetailTitle"></h1>
+        <p class="cdetail-text" id="cdetailText"></p>
+        <div class="cdetail-hash" id="cdetailHash"></div>
+
+        <button type="button" class="cdetail-pill" id="cdetailPoi">
+          <span class="cdetail-pill-icon">📍</span>
+          <span class="cdetail-pill-text" id="cdetailPoiText"></span>
+        </button>
+        <button type="button" class="cdetail-pill cdetail-pill--hint" id="cdetailGuess">
+          <span class="cdetail-pill-icon">🔍</span>
+          <span class="cdetail-pill-text" id="cdetailGuessText"></span>
+        </button>
+
+        <div class="cdetail-meta">
+          <span id="cdetailDateLoc"></span>
+          <button type="button" class="cdetail-nope" id="cdetailNope">☹ 不喜欢</button>
+        </div>
+      </article>
+
+      <section class="cdetail-comment-block" aria-labelledby="cdetailCommentHead">
+        <div class="cdetail-comment-head" id="cdetailCommentHead">
+          <span>共 <strong id="cdetailCommentTotal">0</strong> 条评论</span>
+          <span class="cdetail-sort-icon" aria-hidden="true">⇅</span>
+        </div>
+
+        <div class="cdetail-quick-input">
+          <span class="cdetail-me-avatar" id="cdetailMeAvatar">我</span>
+          <div class="cdetail-quick-field">
+            <input type="text" id="cdetailQuickInput" class="cdetail-quick-inp" placeholder="有话要说，快来评论" maxlength="280" autocomplete="off" />
+            <span class="cdetail-quick-icons" aria-hidden="true">🎤 🖼</span>
+          </div>
+        </div>
+
+        <ul class="cdetail-comment-list" id="cdetailCommentList"></ul>
+      </section>
+    </main>
+
+    <footer class="cdetail-bar" role="contentinfo">
+      <div class="cdetail-bar-input">
+        <span class="cdetail-bar-icon" aria-hidden="true">✎</span>
+        <input type="text" id="cdetailBarInput" class="cdetail-bar-inp" placeholder="说点什么…" maxlength="280" autocomplete="off" />
+      </div>
+      <div class="cdetail-bar-actions">
+        <button type="button" class="cdetail-act" id="cdetailLike" aria-pressed="false">
+          <span class="cdetail-act-icon" aria-hidden="true">♥</span>
+          <span class="cdetail-act-num" id="cdetailLikeNum">0</span>
+        </button>
+        <button type="button" class="cdetail-act" id="cdetailStar" aria-pressed="false">
+          <span class="cdetail-act-icon" aria-hidden="true">★</span>
+          <span class="cdetail-act-num" id="cdetailStarNum">0</span>
+        </button>
+        <button type="button" class="cdetail-act" id="cdetailCommentJump" aria-label="跳转评论">
+          <span class="cdetail-act-icon" aria-hidden="true">💬</span>
+          <span class="cdetail-act-num" id="cdetailCommentNum">0</span>
+        </button>
+      </div>
+    </footer>
+  </div>
+
+  <script src="js/auth-client.js"></script>
+  <script src="js/community-data.js"></script>
+  <script src="js/user-data-api.js"></script>
+  <script src="js/community-detail.js" defer></script>
+  <script src="js/float-ai.js?v=20260820" defer></script>
+</body>
+</html>

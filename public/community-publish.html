@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>智渝游 · 发布分享</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=20260820" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/">
+        <span class="logo-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span>
+        <span class="logo-text">智渝游</span>
+      </a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+        <span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span><span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="site-nav" id="siteNav">
+        <ul class="nav-list">
+          <li><a data-page="index.html" href="/">首页</a></li>
+          <li><a data-page="chat.html" href="chat">渝小智</a></li>
+          <li><a data-page="planner.html" href="planner">AI路线规划</a></li>
+          <li><a data-page="vr.html" href="vr">VR导览</a></li>
+          <li><a data-page="shop.html" href="shop">农产品直购</a></li>
+          <li><a data-page="guide.html" href="guide">交流中心</a></li>
+        </ul>
+        <div class="nav-user" id="navUser"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <h1 id="publishPageTitle">发布分享</h1>
+        <p id="publishSub">分享风景、路线、餐厅或酒店体验，与其他用户交流。</p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="container">
+        <form class="publish-form" id="publishForm">
+          <label class="field-label" for="pubDestination">目的地</label>
+          <input class="cta-input" id="pubDestination" type="text" placeholder="如：合川、武隆" required maxlength="32" />
+
+          <label class="field-label" for="pubType">内容类型</label>
+          <select id="pubType" class="field-select" required>
+            <option value="风景图片">风景图片</option>
+            <option value="路线">路线</option>
+            <option value="美食餐厅">美食餐厅</option>
+            <option value="酒店">酒店</option>
+          </select>
+
+          <label class="field-label" for="pubTitle">标题</label>
+          <input class="cta-input" id="pubTitle" type="text" placeholder="简短标题" required maxlength="80" />
+
+          <label class="field-label" for="pubContent">正文</label>
+          <textarea class="cta-input profile-textarea" id="pubContent" rows="5" placeholder="写下你的体验与评价…" required maxlength="2000"></textarea>
+
+          <label class="field-label" for="pubImage">配图地址（选填）</label>
+          <input class="cta-input" id="pubImage" type="url" placeholder="图片链接，留空则使用默认配图" />
+
+          <label class="field-label" for="pubScore">自评分数（1～5，选填）</label>
+          <input class="cta-input field-input-number" id="pubScore" type="number" min="1" max="5" step="0.1" placeholder="如 4.5" />
+
+          <div class="publish-actions">
+            <button type="submit" class="btn btn-primary" id="pubSubmit">发布</button>
+            <a class="btn btn-ghost" href="guide">返回交流中心</a>
+          </div>
+          <p class="publish-msg" id="publishMsg"></p>
+        </form>
+
+        <div class="publish-my-section" id="myPostsSection" hidden>
+          <h2 class="section-title" id="my-posts">我的发布</h2>
+          <p class="section-desc">你只能编辑自己账号下发布的内容。</p>
+          <div id="myPostsList" class="publish-my-list"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner"><p class="footer-brand">智渝游</p></div>
+  </footer>
+  <script src="js/auth-client.js"></script>
+  <script src="js/community-data.js"></script>
+  <script src="js/user-data-api.js"></script>
+  <script src="js/auth-guard.js" defer></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/community-publish.js" defer></script>
+  <script src="js/float-ai.js?v=20260820" defer></script>
+</body>
+</html>

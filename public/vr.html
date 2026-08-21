@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>智渝游 · VR导览</title>
+  <link rel="icon" type="image/jpeg" href="assets/logo.jpg?v=4" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;600;700&family=DM+Sans:wght@400;600&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="css/main.css?v=20260820" />
+  <style>
+    /* 只添加搜索框和VR容器必要的样式，不影响其他任何地方 */
+    .vr-container {
+      position: relative;
+      width: 100%;
+      height: 0;
+      padding-bottom: 56.25%;
+      overflow: hidden;
+      border-radius: 24px;
+      background: #1a1a2e;
+    }
+    .vr-container iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+    }
+    .ar-viewer-label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #666;
+      margin-bottom: 12px;
+      letter-spacing: 1px;
+    }
+    .ar-viewer-note {
+      font-size: 13px;
+      color: #888;
+      margin-top: 12px;
+      text-align: center;
+    }
+    
+    /* 搜索框样式 */
+    .search-wrapper {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .search-input {
+      flex: 1;
+      padding: 12px 16px;
+      font-size: 16px;
+      border: 1px solid #e0e0e0;
+      border-radius: 12px;
+      outline: none;
+      font-family: inherit;
+    }
+    .search-input:focus {
+      border-color: #0066ff;
+    }
+    .search-suggestions {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 8px;
+      margin-top: 12px;
+    }
+    .suggestion-label {
+      font-size: 13px;
+      color: #888;
+    }
+    .suggestion-tag {
+      padding: 6px 14px;
+      background: #f5f5f5;
+      border: none;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .suggestion-tag:hover {
+      background: #0066ff;
+      color: white;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-header">
+    <div class="header-inner">
+      <a class="logo" href="/" aria-label="智渝游首页">
+        <span class="logo-mark" aria-hidden="true"><img src="assets/logo.jpg" alt="" /></span>
+        <span class="logo-text">智渝游</span>
+      </a>
+      <button type="button" class="nav-toggle" id="navToggle" aria-expanded="false" aria-controls="siteNav" aria-label="打开菜单">
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+        <span class="nav-toggle-bar"></span>
+      </button>
+      <nav class="site-nav" id="siteNav" aria-label="主导航">
+        <ul class="nav-list">
+          <li><a data-page="index.html" href="/">首页</a></li>
+          <li><a data-page="chat.html" href="chat">渝小智</a></li>
+          <li><a data-page="planner.html" href="planner">AI路线规划</a></li>
+          <li><a data-page="vr.html" href="vr">VR导览</a></li>
+          <li><a data-page="shop.html" href="shop">农产品直购</a></li>
+          <li><a data-page="guide.html" href="guide">交流中心</a></li>
+        </ul>
+        <div class="nav-user" id="navUser"></div>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main">
+    <section class="page-hero">
+      <div class="container">
+        <h1>VR 沉浸导览体验</h1>
+        <p>720°全景漫游重庆区县，身临其境感受文化与自然之美。</p>
+      </div>
+    </section>
+
+    <section class="section section-ar" id="ar-immersive">
+      <div class="container">
+        <div class="ar-grid">
+          <div class="ar-viewer-wrap">
+            <!-- ★ 修改点1: 标签更新为文峰古街 -->
+            <p class="ar-viewer-label" id="currentSceneLabel">合川 · 文峰古街（VR全景）</p>
+            <div class="vr-container">
+              <!-- ★ 修改点2: iframe链接替换为文峰古街的如视VR -->
+              <iframe 
+                id="vrIframe"
+                src="https://realsee.cn/o4bLPVGp" 
+                frameborder="0" 
+                scrolling="no" 
+                allow="xr-spatial-tracking; gyroscope; accelerometer" 
+                allowfullscreen>
+              </iframe>
+            </div>
+            <p class="ar-viewer-note" id="arLoadHint">按住拖动查看360°全景 | 支持手机陀螺仪 | 点击全屏按钮获得沉浸体验</p>
+          </div>
+
+          <div class="ar-side">
+            <div class="ar-scan-card">
+              <h3 class="ar-scan-title">搜索景点查看VR全景</h3>
+              <p class="ar-scan-desc">输入景点名称搜索，或点击下方热门标签快速切换VR场景。</p>
+              
+              <!-- 搜索框（保留原样） -->
+              <div class="search-wrapper">
+                <input 
+                  type="text" 
+                  id="vrSearchInput" 
+                  class="search-input" 
+                  placeholder="输入景点名称，如：文峰古街、洪安古镇、磁器口..."
+                  autocomplete="off"
+                />
+                <button type="button" class="btn btn-primary" id="btnSearchVR">搜索并查看VR</button>
+              </div>
+              
+              <!-- 热门推荐标签 —— 增加文峰古街为首选，保留其他热门景点，完全不影响界面风格 -->
+              <div class="search-suggestions">
+                <span class="suggestion-label">🔥 热门推荐：</span>
+                <!-- ★ 文峰古街放在第一个，并且高亮为默认推荐 ★ -->
+                <button class="suggestion-tag" data-spot="wenfeng">🏯 文峰古街</button>
+                <button class="suggestion-tag" data-spot="hongan">🏯 洪安古镇</button>
+                <button class="suggestion-tag" data-spot="ciqikou">🏘️ 磁器口</button>
+                <button class="suggestion-tag" data-spot="hongyadong">🌉 洪崖洞</button>
+                <button class="suggestion-tag" data-spot="dazu">🗿 大足石刻</button>
+                <button class="suggestion-tag" data-spot="wulong">🏞️ 武隆天坑</button>
+                <button class="suggestion-tag" data-spot="wanzhou">💧 万州大瀑布</button>
+              </div>
+            </div>
+
+            <!-- ★ 修改点3: 右侧故事卡片更新为文峰古街介绍 ★ -->
+            <div class="ar-story" id="arStory">
+              <h4 class="ar-story-title" id="arStoryTitle">合川 · 文峰古街</h4>
+              <p class="ar-story-body" id="arStoryBody">文峰古街位于合川南城，涪江、渠江与嘉陵江三江汇流之地。古街依文峰塔而建，传承千年江城文脉，青石板路串联起川东民居与江景码头。夜幕降临时灯火璀璨，可远眺钓鱼城，近观三江烟波，是体验合川慢生活与江畔风情的绝佳去处。</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container footer-inner">
+      <p class="footer-brand">智渝游</p>
+    </div>
+  </footer>
+
+  <script src="js/auth-client.js"></script>
+  <script src="js/user-data-api.js"></script>
+  <script src="js/member.js"></script>
+  <script src="js/main.js" defer></script>
+  <script src="js/features.js" defer></script>
+  <script src="js/float-ai.js?v=20260820" defer></script>
+
+  <script>
+    // ★ 更新VR场景数据库：重点加入文峰古街，并确保链接正确，其他场景保留（无url则提示即将上线）
+    const vrScenes = {
+      wenfeng: {
+        url: "https://realsee.cn/o4bLPVGp",   // 文峰古街真实VR链接
+        title: "合川 · 文峰古街",
+        keywords: ["文峰", "文峰古街", "合川", "文峰塔", "三江", "合川文峰街", "古街"],
+        story: "文峰古街位于合川南城，涪江、渠江与嘉陵江三江汇流之地。古街依文峰塔而建，传承千年江城文脉，青石板路串联起川东民居与江景码头。夜幕降临时灯火璀璨，可远眺钓鱼城，近观三江烟波，是体验合川慢生活与江畔风情的绝佳去处。"
+      },
+      hongan: {
+        url: "https://realsee.cn/qBqL268X",
+        title: "秀山 · 洪安古镇",
+        keywords: ["洪安", "洪安古镇", "边城", "秀山", "秀山边城", "沈从文"],
+        story: "这里是沈从文《边城》的故事发生地，清水江两岸，一边是重庆秀山，一边是湖南茶峒——'一脚踏三省'的地理奇观。拉拉渡仍在运行，仿佛时光从未流走。"
+      },
+      ciqikou: {
+        url: "",
+        title: "磁器口古镇",
+        keywords: ["磁器口", "瓷器口", "磁器口古镇", "沙坪坝", "古镇"],
+        story: "一条石板路，千年磁器口。这里是重庆主城区内保存最为完好的古镇，码头文化、巴渝风情在这里交融。"
+      },
+      hongyadong: {
+        url: "",
+        title: "洪崖洞",
+        keywords: ["洪崖洞", "洪崖洞夜景", "千与千寻", "解放碑", "网红打卡"],
+        story: "依山就势，沿江而建，夜晚的洪崖洞如梦似幻，仿佛《千与千寻》中的汤屋。"
+      },
+      dazu: {
+        url: "",
+        title: "大足石刻",
+        keywords: ["大足", "大足石刻", "石刻", "世界文化遗产", "宝顶山"],
+        story: "世界文化遗产，中国石窟艺术的巅峰之作，千年雕刻诉说着信仰与匠心。"
+      },
+      wulong: {
+        url: "",
+        title: "武隆天生三桥",
+        keywords: ["武隆", "天生三桥", "天坑", "武隆天坑", "变形金刚"],
+        story: "世界自然遗产，天龙桥、青龙桥、黑龙桥横跨峡谷，《变形金刚4》取景地。"
+      },
+      wanzhou: {
+        url: "",
+        title: "万州青龙瀑布",
+        keywords: ["万州", "青龙瀑布", "万州大瀑布", "亚洲第一瀑", "万州瀑布"],
+        story: "宽115米，高64.5米，气势磅礴的青龙瀑布是亚洲第一瀑。"
+      }
+    };
+
+    // DOM元素
+    const vrIframe = document.getElementById('vrIframe');
+    const searchInput = document.getElementById('vrSearchInput');
+    const searchBtn = document.getElementById('btnSearchVR');
+    const storyTitle = document.getElementById('arStoryTitle');
+    const storyBody = document.getElementById('arStoryBody');
+    const sceneLabel = document.getElementById('currentSceneLabel');
+
+    // 搜索匹配函数（支持模糊匹配）
+    function searchVRScene(query) {
+      if (!query || !query.trim()) return null;
+      const lowerQuery = query.toLowerCase().trim();
+      for (const [key, scene] of Object.entries(vrScenes)) {
+        if (scene.title.toLowerCase().includes(lowerQuery)) return { key, scene };
+        for (const keyword of scene.keywords) {
+          if (keyword.toLowerCase().includes(lowerQuery) || lowerQuery.includes(keyword.toLowerCase())) {
+            return { key, scene };
+          }
+        }
+      }
+      return null;
+    }
+
+    // 切换场景函数
+    function switchToScene(sceneKey) {
+      const scene = vrScenes[sceneKey];
+      if (!scene) return false;
+      if (scene.url && scene.url.trim() !== "") {
+        vrIframe.src = scene.url;
+        storyTitle.textContent = scene.title;
+        storyBody.textContent = scene.story;
+        sceneLabel.textContent = scene.title + "（VR全景）";
+        return true;
+      } else {
+        alert(`${scene.title}的VR场景即将上线，敬请期待！\n\n您可以先体验文峰古街与洪安古镇的完整VR全景。`);
+        return false;
+      }
+    }
+
+    // 搜索按钮点击
+    searchBtn.addEventListener('click', () => {
+      const query = searchInput.value;
+      if (!query.trim()) {
+        alert('请输入景点名称，例如：文峰古街、洪安古镇、磁器口...');
+        return;
+      }
+      const result = searchVRScene(query);
+      if (result) {
+        switchToScene(result.key);
+      } else {
+        alert(`未找到“${query}”对应的VR场景\n\n试试输入：文峰古街、洪安古镇、磁器口、洪崖洞、大足石刻、武隆天坑、万州大瀑布`);
+      }
+    });
+
+    // 回车搜索
+    searchInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') searchBtn.click();
+    });
+
+    // 热门推荐点击 —— 已经包含文峰古街，点击即可切换
+    document.querySelectorAll('.suggestion-tag').forEach(tag => {
+      tag.addEventListener('click', () => {
+        const spotKey = tag.dataset.spot;
+        if (spotKey) {
+          switchToScene(spotKey);
+          const scene = vrScenes[spotKey];
+          if (scene) searchInput.value = scene.title;
+        }
+      });
+    });
+
+    // 初始化时确保界面展示文峰古街（防缓存干扰）
+    window.addEventListener('DOMContentLoaded', () => {
+      const params = new URLSearchParams(window.location.search);
+      const spot = params.get('spot');
+
+      // 若存在 spot 参数，优先跳转到指定场景
+      if (spot && vrScenes[spot] && vrScenes[spot].url && vrScenes[spot].url.trim() !== '') {
+        switchToScene(spot);
+        const scene = vrScenes[spot];
+        if (scene && scene.title) searchInput.value = scene.title;
+        searchInput.placeholder = "输入景点名称，如：文峰古街、洪安古镇、磁器口...";
+        return;
+      }
+
+      // 默认展示文峰古街
+      const defaultScene = vrScenes['wenfeng'];
+      if (defaultScene && defaultScene.url) {
+        if (vrIframe.src !== defaultScene.url) {
+          vrIframe.src = defaultScene.url;
+        }
+        storyTitle.textContent = defaultScene.title;
+        storyBody.textContent = defaultScene.story;
+        sceneLabel.textContent = defaultScene.title + "（VR全景）";
+        searchInput.placeholder = "输入景点名称，如：文峰古街、洪安古镇、磁器口...";
+      }
+    });
+
+    console.log('智渝游 VR全景已启动 | 当前默认：合川文峰古街，支持洪安古镇等热门切换');
+  </script>
+</body>
+</html>
+
